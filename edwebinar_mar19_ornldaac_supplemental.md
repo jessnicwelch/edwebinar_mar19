@@ -1,12 +1,7 @@
 # Introduction to Geospatial Analysis in R  
 ### Supplemental Tutorial  
-### *Presented by the ORNL DAAC*  https://daac.ornl.gov  
-### *March 13, 2019*  
+### *Provided by the ORNL DAAC*  https://daac.ornl.gov  
 ***
-
-
-
-<!--------------------------- LOAD THIS FILE INTO RSTUDIO --------------------------->
 
 
 
@@ -14,7 +9,7 @@
 
 
 
-As with the main portion of the tutorial, the raster and rgdal packages must be installed along with its dependencies.
+As with the main portion of the tutorial, the raster and rgdal packages must be installed along with their dependencies.
 
 ```r
 install.packages("raster", dependencies = TRUE)  
@@ -43,7 +38,7 @@ library(rgdal)  # provides writeOGR function
 
 
 
-We must load two objects, *threeStates* and *prjFireInsect*, that were created from manipulations described in the main part of the tutorial. To load a shapefile, use the `readOGR()` function. The third object, *focalFireInsect*, will be created in this supplemental tutorial, but it takes a very long time to run the code; thus, it is provided here for quicker demonstration.
+We must load two objects, *threeStates* and *prjFireInsect*, that were created from manipulations described in the main part of the tutorial. To load a shapefile, use the `readOGR()` function. The third object, *focalFireInsect*, will be created in this supplemental tutorial, but it takes abount an hour to run the code; thus, it is provided here for quicker demonstration.
 
 
 ```r
@@ -113,11 +108,11 @@ print(demo_rast)
 
 
 
-The `focal()` function is very useful for raster analyses because it allows one to change the value of a cell based upon the values of nearby cells.It is often used in place of "distance-based" calculations that are common for vector-type objects, like shapefiles.
+The `focal()` function is very useful for raster analyses because it allows one to change the value of a cell based upon the values of nearby cells. It is often used in place of "distance-based" calculations that are common for vector-type objects, like shapefiles.
 
 
 
-We will first define a function that will tell R how we would like `focal()` to behave. In the code, we tell R that for each focal cell of our grid-like object (which is every non-NA cell because "na.rm = TRUE"), we want to know the maximum value of the "neighborhood" around that focal cell.
+We will first define a function that will tell R how we would like `focal()` to behave. In the code, we tell R that for each focal cell of our RasterLayer object (which is every non-NA cell because "na.rm = TRUE"), we want to know the maximum value of the "neighborhood" around that focal cell.
 
 ```r
 demo_fun <- function(x) { max(x, na.rm = TRUE) }
@@ -202,7 +197,7 @@ Using *prjFireInsect* we will determine which forest locations were damaged by i
 The code below is the same as demonstrated above, but uses a much larger RasterLayer object. We loaded *focalFireInsect* earlier so that it would not be necessary to run the `focal()` function, but we can still examine the results.
 
 ```r
-# this will take a lot of time to run
+# this will take about an hour to run
 funt <- function(x) { max(x, na.rm = TRUE) }
 focalFireInsect <- focal(prjFireInsect, 
                          w = matrix(c(1, 1, 1,
@@ -218,7 +213,7 @@ print(focalFireInsect)
 ## resolution  : 0.00126, 0.000888  (x, y)
 ## extent      : -119.2667, -103.1437, 39.60561, 50.33798  (xmin, xmax, ymin, ymax)
 ## coord. ref. : +proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0 
-## data source : /Users/jessnicwelch/Documents/GitHub/edwebinar_mar19/data/focalFireInsect.tif 
+## data source : C:/Users/qnw/Documents/R/edwebinar_mar19-master/data/focalFireInsect.tif 
 ## names       : focalFireInsect 
 ## values      : 0, 2  (min, max)
 ```
@@ -238,7 +233,7 @@ print(tarFireInsect)
 ## resolution  : 0.00126, 0.000888  (x, y)
 ## extent      : -119.2667, -103.1437, 39.60561, 50.33798  (xmin, xmax, ymin, ymax)
 ## coord. ref. : +proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0 
-## data source : /private/var/folders/vb/sfn2_gp50bx4jgtwjkftl1p00000gn/T/RtmpImat9L/raster/r_tmp_2019-03-12_222211_4841_64916.grd 
+## data source : in memory
 ## names       : layer 
 ## values      : 1, 1  (min, max)
 ```
@@ -266,7 +261,7 @@ We use the function `head()` to view the first six values of *val_tar*. The outp
 
 
 
-Using the cell "locations" provided by *val_tar* we can extract the coordinates of those cells according to the CRS of *tarFireInsect*. *loc_tarFireInsect* is a MAtrix object, and we name its columns.
+Using the cell "locations" provided by *val_tar* we can extract the coordinates of those cells according to the CRS of *tarFireInsect*. *loc_tarFireInsect* is a Matrix object, and we name its columns.
 
 ```r
 loc_tarFireInsect <- xyFromCell(tarFireInsect, val_tar, spatial = FALSE)
@@ -293,8 +288,5 @@ We end by saving the coordiantes in \*.csv format. If we wanted to, we could vis
 write.csv(loc_tarFireInsect, file = "loc_tarFireInsect.csv", row.names = FALSE)
 ```
 ***
-
-
-<!--------------------------------- END OF TUTORIAL --------------------------------->
 
 

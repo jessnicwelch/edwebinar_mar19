@@ -46,21 +46,24 @@ Participants should have a basic understanding of R and some exposure to geospat
 ## 3.2 Data
 
 1. [Sign in to NASA Earthdata](https://urs.earthdata.nasa.gov/users/new)  
-2. Download data -  
-[GrossEmissions_v101_USA_Fire.tif](https://daac.ornl.gov/daacdata/cms/CMS_Forest_Carbon_Fluxes/data//GrossEmissions_v101_USA_Fire.tif)  
-[GrossEmissions_v101_USA_Insect.tif](https://daac.ornl.gov/daacdata/cms/CMS_Forest_Carbon_Fluxes/data//GrossEmissions_v101_USA_Insect.tif)  
+2. [Download GrossEmissions_v101_USA_Fire.tif](https://daac.ornl.gov/daacdata/cms/CMS_Forest_Carbon_Fluxes/data//GrossEmissions_v101_USA_Fire.tif)  
+3. [Download GrossEmissions_v101_USA_Insect.tif](https://daac.ornl.gov/daacdata/cms/CMS_Forest_Carbon_Fluxes/data//GrossEmissions_v101_USA_Insect.tif)  
 
 
 
 # 4. Procedure
 
-1. Tutorial -  
-[R Markdown](https://github.com/jessnicwelch/edwebinar_mar19/blob/master/edwebinar_mar19_ornldaac_tutorial.Rmd)  
-[Markdown](https://github.com/jessnicwelch/edwebinar_mar19/blob/master/edwebinar_mar19_ornldaac_tutorial.md)  
-2. Supplemental -  
-[R Markdown](https://github.com/jessnicwelch/edwebinar_mar19/blob/master/edwebinar_mar19_ornldaac_supplemental.Rmd)  
-[Markdown](https://github.com/jessnicwelch/edwebinar_mar19/blob/master/edwebinar_mar19_ornldaac_supplemental.md)  
-3. Webinar  *Coming Soon*  
+## 4.1 Tutorial  
+1. [R Markdown](https://github.com/jessnicwelch/edwebinar_mar19/blob/master/edwebinar_mar19_ornldaac_tutorial.Rmd)  
+2. [Markdown](https://github.com/jessnicwelch/edwebinar_mar19/blob/master/edwebinar_mar19_ornldaac_tutorial.md)  
+
+## 4.2 Supplemental  
+1. [R Markdown](https://github.com/jessnicwelch/edwebinar_mar19/blob/master/edwebinar_mar19_ornldaac_supplemental.Rmd)  
+2. [Markdown](https://github.com/jessnicwelch/edwebinar_mar19/blob/master/edwebinar_mar19_ornldaac_supplemental.md)  
+
+## 4.3 Webinar  
+1. [Presentation Slides](https://daac.ornl.gov/resources/tutorials/r-geospatial-webinar/Earthdata_R_Geospatial_webinar_Mar2019_v20190312.pdf)  
+2. [Video](https://daac.ornl.gov/resources/tutorials/r-geospatial-webinar/)
 
 
 
