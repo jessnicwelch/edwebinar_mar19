@@ -6,10 +6,6 @@
 
 
 
-<!--------------------------- LOAD THIS FILE INTO RSTUDIO --------------------------->
-
-
-
 # Install and Load Packages  
 > *Functions featured in this section:*  
 > **rasterOptions {raster}**  
@@ -27,7 +23,7 @@ install.packages("tigris", dependencies = TRUE)
 
 
 
-Most functions we will use are from the raster package or are included upon installation of R.
+Most functions we will use are from the raster package or are included upon installation of R. Notice that we can set options for the raster package with `rasterOptions()`. These will help you see how long your code will take to run and help manage large objects.
 
 
 ```r
@@ -51,7 +47,7 @@ For package details try `help()` (e.g., `help("raster")`), and to view the neces
 
 
 
-Two GeoTiff files are needed to complete this tutorial, both from the dataset titled "CMS: Forest Carbon Stocks, Emissions, and Net Flux for the Conterminous US: 2005-2010" and freely available through the ORNL DAAC integrated web platform. The dataset provides maps of estimated carbon emissions in forests of the conterminous United States for the years 2006-2010. We will use the maps of carbon emissions caused by fire (GrossEmissions_v101_USA_Fire.tif) and insect damage (GrossEmissions_v101_USA_Insect.tif). These maps are provided at 100 meter spatial resolution in GeoTIFF format using Albers North America projection. Refer to the accompanying "README.md" on GitHub for instructions on how to download the data.
+Two GeoTiff files are needed to complete this tutorial, both from the dataset titled "CMS: Forest Carbon Stocks, Emissions, and Net Flux for the Conterminous US: 2005-2010" and freely available through the ORNL DAAC integrated web platform. The dataset provides maps of estimated carbon emissions in forests of the conterminous United States for the years 2006-2010. We will use the maps of carbon emissions caused by fire (GrossEmissions_v101_USA_Fire.tif) and insect damage (GrossEmissions_v101_USA_Insect.tif). These maps are provided at 100 meter spatial resolution in GeoTIFF format using Albers North America projection. Refer to the accompanying "README.md" for instructions on how to download the data.
 
 To begin, be sure to set your working directory using `setwd()` and the filepath to where you saved the data (we use the folder "./data/").
 
@@ -87,7 +83,7 @@ print(fire)
 ## resolution  : 100, 100  (x, y)
 ## extent      : -2972184, 2972216, 36233.75, 3318034  (xmin, xmax, ymin, ymax)
 ## coord. ref. : +proj=aea +lat_1=29.5 +lat_2=45.5 +lat_0=23 +lon_0=-96 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs +ellps=GRS80 +towgs84=0,0,0 
-## data source : /Users/jessnicwelch/Documents/GitHub/edwebinar_mar19/data/GrossEmissions_v101_USA_Fire.tif 
+## data source : C:/Users/qnw/Documents/R/edwebinar_mar19-master/data/GrossEmissions_v101_USA_Fire.tif 
 ## names       : GrossEmissions_v101_USA_Fire 
 ## values      : 2, 373  (min, max)
 ```
@@ -322,7 +318,7 @@ If you look closely at the cells "outside" the boundary of the *transStates* pol
 
 
 
-To remove those extraneous cell values, use the `mask()` function to create two new rasters, one for fire damge and one for insect damage. **Note:** You can use `mask()` or `crop()` in either order.
+To remove those extraneous cell values, use the `mask()` function to create two new rasters, one for fire damage and one for insect damage. **Note:** You can use `mask()` or `crop()` in either order.
 
 ```r
 # this will take a couple of minutes to run
@@ -381,7 +377,7 @@ We will use the `extract()` function to collect the cell values of *maskFire* wh
 
 
 ```r
-# this will take a lot of time to run
+# this will take about an hour to run
 val_fireStates <- extract(maskFire, transStates, df = TRUE)  # extract(raster object, extent object)
 summary(val_fireStates)
 ```
@@ -625,7 +621,7 @@ The plot illustrates locations where there were carbon emissions owing to insect
 
 
 
-Next, we will join *reclassFire* and *reclassInsect* to form a single RasterLayer object. According to the documentation for this dataset, there are no overlapping, non-NA cells between the two RasterLayer objects. That is, if you were to combine the two RasterLayers object, a cell could take only the value provided by *reclassFire* (i.e., two) or reclassInsect (i.e., one), or be NA. This allows us to use the `cover()` function to combine objects. `cover()` is unique because it will replace NA values of *reclassFire* with non-NA values of *reclassInsect*.
+Next, we will join *reclassFire* and *reclassInsect* to form a single RasterLayer object. According to the documentation for this dataset, there are no overlapping, non-NA cells between the two RasterLayer objects. That is, if you were to combine the two RasterLayers object, a cell could take only the value provided by *reclassFire* (i.e., two) or *reclassInsect* (i.e., one), or be NA. This allows us to use the `cover()` function to combine objects. `cover()` is unique because it will replace NA values of *reclassFire* with non-NA values of *reclassInsect*.
 
 ```r
 # this will take a couple of minutes to run
@@ -688,16 +684,16 @@ print(prjFireInsect)
 ## resolution  : 0.00126, 0.000888  (x, y)
 ## extent      : -119.2667, -103.1437, 39.60561, 50.33798  (xmin, xmax, ymin, ymax)
 ## coord. ref. : +proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0 
-## data source : /Users/jessnicwelch/Documents/GitHub/edwebinar_mar19/data/prjFireInsect.tif 
+## data source : C:/Users/qnw/Documents/R/edwebinar_mar19-master/data/prjFireInsect.tif 
 ## names       : prjFireInsect 
 ## values      : 1, 2  (min, max)
 ```
 
-Now we have a new RasterLayer object named *prjFireInsect* that uses the standard "WGS84" CRS with latitude and longitude expressed in decimal degrees (DD).
+Now we have a new RasterLayer object named *prjFireInsect* that has the standard Geographic projection with latitude and longitude expressed in decimal degrees (DD) as its CRS.
 
 
 
-We will plot *prjFireInsect* with slightly different arguments than *fireInsect* to "zoom in" to the center of the plot. Also, we will use *threeStates* instead of *transStates* because *threeStates* also uses the WGS84 CRS.
+We will plot *prjFireInsect* with slightly different arguments than *fireInsect* to "zoom in" to the center of the plot. Also, we will use *threeStates* instead of *transStates* because *threeStates* also uses the Geographic projection.
 
 ```r
 plot(prjFireInsect,
@@ -772,7 +768,7 @@ file.exists("./data/prjFireInsect.kml")
 ```
 
 ```
-## [1] TRUE
+## [1] FALSE
 ```
 We successfully saved the RasterLayer object as a KML file.
 
@@ -784,9 +780,5 @@ This is the end to the tutorial. If you liked this tutorial, please tell us on [
 
 
 There is a supplemental document included on GitHub that offers two additional sections, *Perform a Focal Analysis* and *Get Cell Coordinates*.
-
-
-
-<!--------------------------------- END OF TUTORIAL --------------------------------->
 
 
