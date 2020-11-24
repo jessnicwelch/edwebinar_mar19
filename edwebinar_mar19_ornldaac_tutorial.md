@@ -17,7 +17,7 @@ In addition to the built-in functionality of R, we will use three packages throu
 
 ```r
 install.packages("raster", dependencies = TRUE)  
-install.package("rgdal", dependencies = TRUE)
+install.packages("rgdal", dependencies = TRUE)
 install.packages("tigris", dependencies = TRUE)
 ```
 
