@@ -32,7 +32,7 @@ editor_options:
 In addition to the built-in functionality of R, we will use three packages throughout this exercise. Packages are a collection of documentation, functions, and other items that someone has created and compiled for others to use in R. Install the raster, rgdal, and tigris packages, as well as their dependencies, using the function `install.packages()`.
 ```{r message=FALSE, warning=FALSE, eval=FALSE}
 install.packages("raster", dependencies = TRUE)  
-install.package("rgdal", dependencies = TRUE)
+install.packages("rgdal", dependencies = TRUE)
 install.packages("tigris", dependencies = TRUE)
 ```
 
