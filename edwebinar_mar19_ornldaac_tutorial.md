@@ -17,7 +17,7 @@ In addition to the built-in functionality of R, we will use three packages throu
 
 ```r
 install.packages("raster", dependencies = TRUE)  
-install.package("rgdal", dependencies = TRUE)
+install.packages("rgdal", dependencies = TRUE)
 install.packages("tigris", dependencies = TRUE)
 ```
 
@@ -231,7 +231,7 @@ identical(crs(fire), crs(threeStates))
 *threeStates* does not have the same CRS as *fire*, so we will make a new SpatialPolygonsDataFrame object with the projection of *fire* using `spTransform()`. We also use `CRS()` to properly format the projection arguments of *fire*.
 
 ```r
-transStates <- spTransform(threeStates, CRS(fire@crs@projargs))
+transStates <- spTransform(as_Spatial(threeStates), CRS(fire@crs@projargs))
 plot(transStates)
 ```
 
@@ -707,7 +707,7 @@ plot(prjFireInsect,
      col = c("dark green", "red"),
      axis.args = list(at = c(0.5, 1.5), labels = c("insect", "fire")),
      box = FALSE)
-plot(threeStates,
+plot(threeStates$geometry,
      border = "black",
      add = TRUE)
 ```
@@ -752,7 +752,7 @@ plot(prjFireInsect,
      col = c("dark green", "red"),
      axis.args = list(at = c(0.5, 1.5), labels = c("insect", "fire")),
      box = FALSE)
-plot(threeStates,
+plot(threeStates$geometry,
      border = "black",
      add = TRUE)
 dev.off()
