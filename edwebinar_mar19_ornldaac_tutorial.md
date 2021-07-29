@@ -707,7 +707,7 @@ plot(prjFireInsect,
      col = c("dark green", "red"),
      axis.args = list(at = c(0.5, 1.5), labels = c("insect", "fire")),
      box = FALSE)
-plot(threeStates,
+plot(threeStates$geometry,
      border = "black",
      add = TRUE)
 ```
@@ -752,7 +752,7 @@ plot(prjFireInsect,
      col = c("dark green", "red"),
      axis.args = list(at = c(0.5, 1.5), labels = c("insect", "fire")),
      box = FALSE)
-plot(threeStates,
+plot(threeStates$geometry,
      border = "black",
      add = TRUE)
 dev.off()
