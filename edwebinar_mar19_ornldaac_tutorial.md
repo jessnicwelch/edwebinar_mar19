@@ -231,7 +231,7 @@ identical(crs(fire), crs(threeStates))
 *threeStates* does not have the same CRS as *fire*, so we will make a new SpatialPolygonsDataFrame object with the projection of *fire* using `spTransform()`. We also use `CRS()` to properly format the projection arguments of *fire*.
 
 ```r
-transStates <- spTransform(threeStates, CRS(fire@crs@projargs))
+transStates <- spTransform(as_Spatial(threeStates), CRS(fire@crs@projargs))
 plot(transStates)
 ```
 
