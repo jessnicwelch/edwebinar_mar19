@@ -1,7 +1,8 @@
 ---
 title: "Introduction to Geospatial Analysis in R"
-subtitle: "Supplemental Tutorial"
+subtitle: "Supplemental Tutorial: Neighborhood analysis"
 author: 'Presented by the ORNL DAAC  https://daac.ornl.gov'
+date: "January 9, 2024"
 output:
   html_document:
     keep_md: yes
@@ -17,51 +18,53 @@ editor_options:
 
 <!--------------------------- LOAD THIS FILE INTO RSTUDIO --------------------------->
 
+This supplemental tutorial will demonstrate how perform a **neighborhood analysis** to identify locations disturbed by insects are adjacent to fire disturbance. The tutorial will use two raster maps created during the main tutorial.
+
 # Install and Load Packages  
 
-As with the main portion of the tutorial, the raster and rgdal packages must be installed along with their dependencies.
+As with the main portion of the tutorial, the *terra* and *sf* must be installed along with their dependencies.
 
 
 ```r
-install.packages("raster", dependencies = TRUE)  
-install.packages("rgdal", dependencies = TRUE)  
+install.packages("terra", dependencies = TRUE)  
+install.packages("sf", dependencies = TRUE)  
 ```
 
-Load the raster and rgdal packages and set options.
+Load the *terra* and *sf* packages.
 
 
 ```r
-library(raster)  # provides most functions
-  rasterOptions(progress = "text")  # show the progress of running commands
-  rasterOptions(maxmemory = 1e+09)  # increase memory allowance
-  rasterOptions(tmpdir = "temp_files")  # folder for temporary storage of large objects
-library(rgdal)  # provides writeOGR function
+library(terra)       # provides most functions
+library(sf)           # provides function for saving files
 ```
 
 # Load Data  
 
 > *Functions featured in this section:*  
-> **readOGR {rgdal}**  
-> reads an OGR data source and loads it as a SpatialPolygonsDataFrame object  
+> **sf::st_read()**  
+> reads a shapefile and loads it as a simple feature object  
 
-We must load two objects, *threeStates* and *prjFireInsect*, that were created from manipulations described in the main part of the tutorial. To load a shapefile, use the `readOGR()` function. The third object, *focalFireInsect*, will be created in this supplemental tutorial, but it takes abount an hour to run the code; thus, it is provided here for quicker demonstration.
+We must load two objects, *threeStates* and *prjFireInsect*, that were created from manipulations described in the main part of the tutorial and saved in the "./data" folder. To load a shapefile, use the `st_read()` function from the *sf* package. We will create a third object, *focalFireInsect*, later in this supplemental tutorial.
 
 
 ```r
-threeStates <- readOGR("./data/threeStates.shp")
-prjFireInsect <- raster("./data/prjFireInsect.tif")
-focalFireInsect <- raster("./data/focalFireInsect.tif")  # new object that will be derived in this supplemental tutorial
+threeStates <- st_read(dsn="./data/threeStates.shp", quiet=TRUE)
+prjFireInsect <- rast("./data/prjFireInsect.tif")
 ```
 
-# Perform a Focal Analysis  
+# Perform a Focal Analysis: a simple demonstration  
 
 > *Functions featured in this section:*  
-> **focal {raster}**  
-> calculates focal ("moving window") values for the neighborhood of focal cells around a target cell using a matrix  
+> **terra::focal()**  
+> calculates values from the neighborhood of cells ("moving window") around a target cell using a matrix  
 
-We begin with a demonstration of how the `focal()` function behaves using a much smaller RasterLayer object than the one used in the main part of the tutorial.
+A neighborhood analysis computes the value of a single focal cell using information from nearby cells.  Imagine a donut (i.e., an annulus) where the focal cell is in the donut hole and values from the ring of surrounding cells  are used to derive a value for the focal cell. 
 
-Here, we create a Matrix object to demonstrate a "grid" similar to a RasterLayer object. Like *prjFireInsect*, the Matrix object is made up of cell values (ones code for insect damage and twos code for fire damage) and NAs (non-values). Unlike *prjFireInsect*, it has only eight rows and eight columns.
+Users can specify neighborhoods that best fit the spatial processes under analysis. The neighborhood may or may not include the focal cell, and the width of the band of surrounding cells can be specified to alternatively enlarge or shrink the neighborhood. Moreover, the neighborhood does not have to take the form of ring. It can be rectangular and/or expanded on one side but not the others.  For example, imagine estimating air pollution values for a cells in a landscape with westerly winds. The analysis could use a triangular neighborhood that fans out to the west of the focal cell to use values from upwind cells while ignoring downwind values to the east. All cells within the neighborhood can be treated equally. Alternatively, the relative influence of cells can be weighted by their distance from the focal cell.
+
+The `focal()` function is used in the *terra* package for neighborhood analysis.  We begin with a demonstration of how the `focal()` behaves using a small SpatRaster object.
+
+First, we create a matrix object similar to the raster grid of a SpatRaster object. Like *prjFireInsect*, the matrix object is made up of cell values (1's code for insect damage and 2's code for fire damage) and NA's (non-values). Unlike *prjFireInsect*, it is much smaller with only eight rows and eight columns.
 
 
 ```r
@@ -89,216 +92,240 @@ print(demo_mat)
 ## [8,]    1   NA   NA   NA   NA   NA   NA    1
 ```
 
-Printing the Matrix object shows how it resembles an eight by eight grid.
+Printing the matrix object shows how it resembles an 8 by 8 grid.
 
-Next, we will save the Matrix object as a RasterLayer object. Using `print()`, we can see we created a RasteLayer object with no CRS.
+Next, convert the matrix object to a raster object using *terra*'s `rast()` function. Calling `print()` shows the properties of a SpatRaster object with no CRS.
 
 
 ```r
-demo_rast <- raster(demo_mat)
+demo_rast <- rast(demo_mat)
 print(demo_rast)
 ```
 
 ```
-## class      : RasterLayer 
-## dimensions : 8, 8, 64  (nrow, ncol, ncell)
-## resolution : 0.125, 0.125  (x, y)
-## extent     : 0, 1, 0, 1  (xmin, xmax, ymin, ymax)
-## crs        : NA 
-## source     : memory
-## names      : layer 
-## values     : 1, 2  (min, max)
+## class       : SpatRaster 
+## dimensions  : 8, 8, 1  (nrow, ncol, nlyr)
+## resolution  : 1, 1  (x, y)
+## extent      : 0, 8, 0, 8  (xmin, xmax, ymin, ymax)
+## coord. ref. :  
+## source(s)   : memory
+## name        : lyr.1 
+## min value   :     1 
+## max value   :     2
 ```
 
-The `focal()` function is very useful for raster analyses because it allows one to change the value of a cell based upon the values of nearby cells. It is often used in place of "distance-based" calculations that are common for vector-type objects, like shapefiles.
+The `focal()` function is useful for raster analyses because it allows the user to compute the value of a focal (target) cell based upon the values of nearby cells. This utility has two components: (a) a definition of the window that identifies which cells to include in the neighborhood and (b) the function that evaluates the values of the nearby cells.
 
-We will first define a function that will tell R how we would like `focal()` to behave. In the code, we tell R that for each focal cell of our RasterLayer object (which is every non-NA cell because "na.rm = TRUE"), we want to know the maximum value of the "neighborhood" around that focal cell.
+First , we define the "neighborhood", that is, the locations and number of surrounding cells considered as a "neighbor" of the focal cell. We will use a rectangular neighborhood of eight cells so that every cell adjacent to the focal cell is considered a neighbor. This neighborhood is represented by a 3 x 3 matrix; it includes the focal cell in the center and 8 adjacent cells. 
 
 
 ```r
-demo_fun <- function(x) { max(x, na.rm = TRUE) }
+demo_neigh <- matrix(rep(1,9), ncol = 3)   # a 3 x 3 matrix of 1's
+print(demo_neigh)
 ```
 
-To use `focal()`, we also must define what the "neighborhood" is for the focal value; that is, how many surrounding cells do we consider a "neighbor" of the focal cell. We will use a neighborhood of eight cells so that every cell adjacent to the focal cell is considered a neighbor. You can see this neighborhood represented in the code following "w = " below. We use ones to represent all the neighboring cells because we want all cells weighted equally, and we also consider the focal cell in our analysis. "pad = TRUE" and "padValue = 0" are used because we want to consider all cells in *demo_rast*, even the "edge" cells that do not have a complete neighborhood of cells. In the case of edges, the "missing" neighbors will be considered zeros. Notice that we use *demo_fun* as an argument in the `focal()` function.
+```
+##      [,1] [,2] [,3]
+## [1,]    1    1    1
+## [2,]    1    1    1
+## [3,]    1    1    1
+```
+
+We use 1's to represent all the neighboring cells because we want all cells weighted equally, and we also include the focal cell in our analysis. The *demo_neigh* matrix is passed to the `focal()` command below following "w = " argument below; the "w" is a reference to "moving window", a synonym for neighborhood.  
+
+The options "expand = TRUE" and "fillValue = 0" are used because we want to consider **all** cells in *demo_rast*, even the "edge" cells that do not have a complete neighborhood of cells. In the case of edges, the "missing" neighbors will be considered zeros. 
+
+The function used to evaluate cells in the neighborhood is set by "fun = 'max'", which tells R to find the maximum value for all cells in the window. The "na.rm = TRUE" specifies that NA cells in the neighborhood will be skipped. The "na.policy='omit'" tells `focal()` to not to compute values for focal cells that are NA.
 
 
 ```r
-demo_foc <- focal(demo_rast, 
-                  w = matrix(c(1, 1, 1, 
-                               1, 1, 1, 
-                               1, 1, 1), ncol = 3), 
-                  fun = demo_fun, pad = TRUE, padValue = 0)
-print(as.matrix(demo_foc))
+demo_foc <- focal(x=demo_rast, w = demo_neigh, fun = 'max', na.rm=TRUE, 
+                  na.policy='omit', expand = TRUE, fillValue = 0)
+print(matrix(demo_foc[], ncol=8))
 ```
 
 ```
 ##      [,1] [,2] [,3] [,4] [,5] [,6] [,7] [,8]
-## [1,]    1    1    0    1    1    2    2    2
-## [2,]    2    2    2    1    1    2    2    2
-## [3,]    2    2    2    1    2    2    2    2
-## [4,]    2    2    2    2    2    2    2    1
-## [5,]    2    2    2    2    2    2    2    1
-## [6,]    2    2    2    2    2    2    2    1
-## [7,]    1    1    1    2    2    2    2    1
-## [8,]    1    1    1    2    2    2    1    1
+## [1,]    1    2   NA   NA    2   NA    1    1
+## [2,]   NA   NA    2    2    2   NA   NA   NA
+## [3,]   NA   NA    2   NA   NA   NA    1   NA
+## [4,]   NA   NA   NA   NA    2    2    2   NA
+## [5,]   NA    1    2   NA    2   NA    2   NA
+## [6,]   NA   NA   NA    2   NA    2   NA   NA
+## [7,]   NA    2    2   NA   NA   NA   NA   NA
+## [8,]    2    2   NA    1    1   NA   NA    1
 ```
 
-Compare the resultant output with *demo_mat*. If a focal cell was one, but adjacent to a two, the focal cell became a two. A focal cell that was a two remains a two because two is the maximum value of the RasterLayer object.
+Compare the *demo_foc* output with *demo_mat*. If a focal cell was 1, but adjacent to a 2, the focal cell became a 2. A focal cell that was a 2 remains a 2 because 2 is the maximum value of neighboring cells in *demo_rast*.
 
-Now we combine *demo_rast* and *demo_foc* using raster algebra (i.e., adding the two RasterLayer objects).
+Suppose we want to identify the cells in *demo_rast* that are 1's having at least one 2 in its neighborhood. We can draw on the information held in both *demo_rast* and *demo_foc*.  First, combine the two rasters using raster algebra (i.e., adding the two SpatRaster objects).
 
 
 ```r
-demo_temp <- demo_rast + demo_foc
-print(as.matrix(demo_temp))
+demo_temp <- demo_rast + demo_foc   # adds values in the two rasters, cell by cell
+print(matrix(demo_temp[], ncol=8))
 ```
 
 ```
 ##      [,1] [,2] [,3] [,4] [,5] [,6] [,7] [,8]
-## [1,]    2   NA   NA   NA   NA   NA   NA    3
-## [2,]    3   NA   NA   NA    2   NA    4    3
-## [3,]   NA    4    3   NA    3   NA    3   NA
-## [4,]   NA    3   NA   NA   NA    4   NA    2
-## [5,]    4    4   NA    3    4   NA   NA    2
-## [6,]   NA   NA   NA    3   NA    4   NA   NA
-## [7,]    2   NA    2    3    4   NA   NA   NA
-## [8,]    2   NA   NA   NA   NA   NA   NA    2
+## [1,]    2    3   NA   NA    4   NA    2    2
+## [2,]   NA   NA    4    3    4   NA   NA   NA
+## [3,]   NA   NA    3   NA   NA   NA    2   NA
+## [4,]   NA   NA   NA   NA    3    3    3   NA
+## [5,]   NA    2    3   NA    4   NA    4   NA
+## [6,]   NA   NA   NA    4   NA    4   NA   NA
+## [7,]   NA    4    3   NA   NA   NA   NA   NA
+## [8,]    3    3   NA    2    2   NA   NA    2
 ```
 
-Every cell that was a one in *demo_rast* but changed to a two in *demo_foc* is now a three (e.g., *demo_rast* = 1 and *demo_foc* = 2; therefore, *demo_rast* + *demo_foc* = 1 + 2 = 3). A cell that was a two in *demo_rast* and stayed a two in *demo_foc* is now a four.
+Every cell that was a 1 in *demo_rast* but changed to a 2 in *demo_foc* is now a 3 (e.g., *demo_rast* = 1 and *demo_foc* = 2; therefore, *demo_rast* + *demo_foc* = 1 + 2 = 3). A cell that was a 2 in *demo_rast* and stayed a 2 in *demo_foc* is now a 4. So, the cells with a 3 in *demo_tmp* are the ones in the *demo_rast* cells with value 1 and at least one 2 in their neighborhood.
 
-We will use the `calc()` function to reclassify the values of *demo_temp* to get the final values we'd like to see represented. In the code below, we tell R that if a value is three, change it to a one, and every other value becomes NA.
+We will use *terra*'s `app()`function (apply) to reclassify the values of *demo_temp* to get the final values we'd like to see represented. In the code below, we tell R that if a *demo_temp* value is 3, change it to a 1, and save  every other value as NA.
 
 
 ```r
-demo_tar <- calc(demo_temp, 
-                 fun = function(x) {
-                       ifelse( x == 3, 1, NA) } )
-print(as.matrix(demo_tar))
+demo_tar <- app(demo_temp, 
+                 fun = function(x) {ifelse( x == 3, 1, NA) } )
+print(matrix(demo_tar[], ncol=8))
 ```
 
 ```
 ##      [,1] [,2] [,3] [,4] [,5] [,6] [,7] [,8]
-## [1,]   NA   NA   NA   NA   NA   NA   NA    1
-## [2,]    1   NA   NA   NA   NA   NA   NA    1
-## [3,]   NA   NA    1   NA    1   NA    1   NA
-## [4,]   NA    1   NA   NA   NA   NA   NA   NA
-## [5,]   NA   NA   NA    1   NA   NA   NA   NA
-## [6,]   NA   NA   NA    1   NA   NA   NA   NA
-## [7,]   NA   NA   NA    1   NA   NA   NA   NA
-## [8,]   NA   NA   NA   NA   NA   NA   NA   NA
+## [1,]   NA    1   NA   NA   NA   NA   NA   NA
+## [2,]   NA   NA   NA    1   NA   NA   NA   NA
+## [3,]   NA   NA    1   NA   NA   NA   NA   NA
+## [4,]   NA   NA   NA   NA    1    1    1   NA
+## [5,]   NA   NA    1   NA   NA   NA   NA   NA
+## [6,]   NA   NA   NA   NA   NA   NA   NA   NA
+## [7,]   NA   NA    1   NA   NA   NA   NA   NA
+## [8,]    1    1   NA   NA   NA   NA   NA   NA
 ```
 
-Our final product is a grid of NAs and ones that were adjacent to a two in *demo_rast*. Now we will apply this same logic to the "real" data.
+This raster is our final product for the demonstration. The cells with value of 1 indicate 1-cells in *demo_rast* that were adjacent to a 2. We will apply this same logic to the "real" data.
 
-Using *prjFireInsect* we will determine which forest locations were damaged by insects and were adjacent to forest locations damaged by fire. In other words, we will locate cells with the value one that are next to cells with the value two. As explained in the main part of the tutorial, no cells that have values overlap between the original *fire* and *insect* RasterLayer objects, which is why we will use `focal()` here.
+# Perform a Focal Analysis: identify locations adjacent fire and insect disturbances 
 
-The code below is the same as demonstrated above, but uses a much larger RasterLayer object. We loaded *focalFireInsect* earlier so that it would not be necessary to run the `focal()` function, but we can still examine the results.
+Using *prjFireInsect*, we will determine which forest locations were damaged by insects and were adjacent to forest locations damaged by fire. In other words, we will locate cells with the value 1 that are next to cells with the value 2. As explained in the main part of the tutorial, there are no cells that had both *fire* and *insect* disturbance, which is why we will use `focal()` here.
+
+The code below is the same as demonstrated above, but it uses a much larger SpatRaster object, *prjFireInsect*.  
+The code runs the `focal()` analysis to create *focalFireInsect*.  Then, that raster is reclassified to create *tarFireInsect*. 
 
 
 ```r
-# this will take about an hour to run
-funt <- function(x) { max(x, na.rm = TRUE) }
-
+# this could take several minutes to run; use saved file if available.
 if(file.exists("./data/focalFireInsect.Rds")) { 
   focalFireInsect <- readRDS("./data/focalFireInsect.rds") 
-  print(focalFireInsect)
   }else{ 
-    focalFireInsect <- focal(prjFireInsect, 
-                             w = matrix(c(1, 1, 1,
-                                          1, 1, 1,
-                                          1, 1, 1), ncol = 3), 
-                             fun = funt, pad = TRUE, padValue = 0)
-    print(focalFireInsect)
-  }
+    fireinsect_neigh <- matrix(rep(1,9), ncol = 3)
+    focalFireInsect <- focal(prjFireInsect, w = fireinsect_neigh, 
+                             fun = 'max', na.rm=TRUE, na.policy='omit', 
+                             expand = TRUE, fillValue = 0)
+      }
+print(focalFireInsect)
 ```
 
 ```
-## class      : RasterLayer 
-## dimensions : 12086, 12796, 154652456  (nrow, ncol, ncell)
-## resolution : 0.00126, 0.000888  (x, y)
-## extent     : -119.2667, -103.1437, 39.60561, 50.33798  (xmin, xmax, ymin, ymax)
-## crs        : +proj=longlat +datum=WGS84 +no_defs 
-## source     : r_tmp_2021-12-03_091211_13400_20419.grd 
-## names      : layer 
-## values     : 0, 2  (min, max)
+## class       : SpatRaster 
+## dimensions  : 9169, 13781, 1  (nrow, ncol, nlyr)
+## resolution  : 0.001169079, 0.001169079  (x, y)
+## extent      : -119.2604, -103.1493, 39.61248, 50.33177  (xmin, xmax, ymin, ymax)
+## coord. ref. : lon/lat WGS 84 (EPSG:4326) 
+## source(s)   : memory
+## varname     : prjFireInsect 
+## name        : focal_max 
+## min value   :         1 
+## max value   :         2
 ```
 
 
 ```r
-# this will take a minute to run
+# this could take a few minutes to run
 temp <- focalFireInsect + prjFireInsect
-tarFireInsect <- calc(temp, 
-                      fun = function(x) { 
-                            ifelse(x == 3, 1, NA) } )
-```
-
-
-```r
+tarFireInsect <- app(temp, fun = function(x) {ifelse( x == 3, 1, NA) } )
 print(tarFireInsect)
+cat("\nSummary\n", summary(tarFireInsect[]), "\n")
+rm(temp)    # clean up
 ```
 
-```
-## class      : RasterLayer 
-## dimensions : 12086, 12796, 154652456  (nrow, ncol, ncell)
-## resolution : 0.00126, 0.000888  (x, y)
-## extent     : -119.2667, -103.1437, 39.60561, 50.33798  (xmin, xmax, ymin, ymax)
-## crs        : +proj=longlat +datum=WGS84 +no_defs 
-## source     : r_tmp_2021-12-03_113324_13224_81808.grd 
-## names      : layer 
-## values     : 1, 1  (min, max)
-```
+Notice that *tarFireInsect* has only the value 1 and NA's.  The 1's identify the cells that meet the criterion: insect damage adjacent to at least one cell with fire damage.
 
-Notice that the *tarFireInsect* has only the value one and NAs, just like in our demonstration.
 
 # Get Cell Coordinates  
 
 > *Functions featured in this section:*  
-> **xyFromCell {raster}**  
-> gets coordinates of the center of raster cells for a RasterLayer object  
+> **terra::xyFromCell**  
+> gets coordinates of the center of raster cells for a SpatRaster object  
 
-In this section, we will get the actual geographic coordinates of the cells that we identified in the last section. To do this we create a vector that stores the index of *tarFireInsect* cells that are one. That is, we store the "locations" of the values across the extent of the RasterLayer object, as if counting from one to the total number of cells across the "grid".
-
-
-```r
-val_tar <- which(tarFireInsect[]==1)
-head(val_tar)
-```
-
-```
-## [1] 22663564 22999067 23037512 23254953 23306132 23318928
-```
-
-We use the function `head()` to view the first six values of *val_tar*. The output tells us that the cell at position 22,663,564 of the "grid" has the value one.
-
-Using the cell "locations" provided by *val_tar* we can extract the coordinates of those cells according to the CRS of *tarFireInsect*. *loc_tarFireInsect* is a Matrix object, and we name its columns.
+In this section, we will get the geographic coordinates of the cells that were identified in the last section. First, we create a vector that stores the index of *tarFireInsect* cells that are 1. That is, we store the matrix  or grid "locations" of the values across the extent of the SpatRaster object, as if counting from one to the total number of cells across the raster grid. The cell index number starts with 1 in upper left corner of raster grid. Index numbers increase from left to right across the row, and then from top to bottom. The cell index at the bottom right corner is equal to `ncell(tarFireInsect)`, the total number of cells in the raster layer.
 
 
 ```r
-loc_tarFireInsect <- xyFromCell(tarFireInsect, val_tar, spatial = FALSE)
+val_tar <- which(tarFireInsect[]==1)                  # returns index of cells with value of 1
+cat("Number of 1-cells: ", length(val_tar), "\n\n")   # print number of cells with value of 1
+```
+
+```
+## Number of 1-cells:  11487
+```
+
+```r
+cat("First six index values: ", head(val_tar) )
+```
+
+```
+## First six index values:  18468526 18761010 18774794 18788574 18940070 18953851
+```
+
+There are 11,487 cells that have value of 1.  We use the function `head()` to view the first six values of *val_tar*. For example, the output tells us that the cell at position 18,468,526 of the "grid" has the value 1
+
+Using the cell "locations" provided by *val_tar* and the `xyFromCell()` function, we can extract the coordinates of those cells. The function outputs a matrix object, *loc_tarFireInsect*, and we name its columns. Because the CRS of this SpatRaster uses geographic coordinates, the x,y coordinates will be in longitude, latitude.
+
+
+```r
+loc_tarFireInsect <- xyFromCell(tarFireInsect, val_tar)
 colnames(loc_tarFireInsect) <- c("lon","lat")
 head(loc_tarFireInsect)
 ```
 
 ```
 ##            lon      lat
-## [1,] -116.9388 48.76489
-## [2,] -113.4020 48.74180
-## [3,] -113.3302 48.73914
-## [4,] -113.4449 48.72404
-## [5,] -113.4512 48.72049
-## [6,] -113.4512 48.71960
+## [1,] -116.9392 48.76462
+## [2,] -113.3349 48.74007
+## [3,] -113.3314 48.73890
+## [4,] -113.3326 48.73773
+## [5,] -113.4436 48.72487
+## [6,] -113.4436 48.72370
 ```
 
-The first six rows of *loc_traFireInsect* shows the longitude and latitude of cells that have the value one. In other words, we now know the exact locations of forested areas throughtout Idaho, Montana, and Wyoming that had insect damage AND were adjacent to a location that had fire damage.
+The first six rows of *loc_traFireInsect* shows the longitude and latitude of cells that have the value 1. In other words, we now know the exact locations of forested areas throughout Idaho, Montana, and Wyoming that had insect damage **and** were adjacent to a location that had fire damage.
 
-We end by saving the coordiantes in \*.csv format. If we wanted to, we could visit the locations in person! Try looking up one of these locations using a web-based map, like Google Maps.
+We save these coordinates in a comma-separated values (CSV) format for future use. If we wanted to, we could visit these locations in person! Try looking up one of these locations using a web-based map, like Google Maps.
 
 
 ```r
-write.csv(loc_tarFireInsect, file = "loc_tarFireInsect.csv", row.names = FALSE, overwrite = TRUE)
+write.csv(loc_tarFireInsect, file = "loc_tarFireInsect.csv", row.names = FALSE)
 ```
 
-***
+
+# Plot Fire-Insect locations 
+
+> *Functions featured in this section:*  
+> **sf::st_as_sf**  
+> gets coordinates of the center of raster cells for a SpatRaster object
+
+Using the coordinate, we can plot these locations on a dot map. The `st_as_sf()` function, as used below, creates a simple feature point object from a data frame holding point coordinates.  The "coords=c(1,2)" and "crs =" arguments specify which columns of the data frame hold the x,y coordinates as well as their CRS. 
+
+
+```r
+# create simple feature point object
+fi_pt <- st_as_sf(as.data.frame(loc_tarFireInsect), 
+                  coords=c(1,2), crs = "+proj=longlat +datum=WGS84")
+plot(threeStates$geometry, main="Locations with fire-insect damage")
+plot(fi_pt, add=T, col="blue", cex=0.7)
+```
+
+![](edwebinar_mar19_ornldaac_supplemental_files/figure-html/plot_FI_loc-1.png)<!-- -->
+
+
 
 <!--------------------------------- END OF TUTORIAL --------------------------------->

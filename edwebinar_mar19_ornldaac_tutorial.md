@@ -1,7 +1,7 @@
 ---
 title: "Introduction to Geospatial Analysis in R"
-author: "Presented by the ORNL DAAC https://daac.ornl.gov"
-date: "March 13, 2019"
+author: "ORNL DAAC https://daac.ornl.gov"
+date: "December 18, 2023"
 output:
  html_document:
   keep_md: yes
@@ -22,62 +22,55 @@ editor_options:
 
 # Install and Load Packages
 
-> *Functions featured in this section:*  
-> **rasterOptions {raster}**  
-> set global options used by the raster package  
 
 In addition to the built-in functionality of R, we will use four packages throughout this exercise. Packages are a collection of documentation, functions, and other items that someone has created and compiled for others to use in R. Install the packages, as well as their dependencies, using the function `install.packages()`.
 
 
 ```r
-install.packages("raster", dependencies = TRUE) 
-install.packages("rgdal", dependencies = TRUE) 
+install.packages("terra", dependencies = TRUE) 
 install.packages("sf", dependencies = TRUE) 
-install.packages("tigris", dependencies = TRUE) 
+install.packages("tigris", dependencies = TRUE)
+install.packages("raster", dependencies = TRUE)
 ```
 
-Most functions we will use are from the raster package or are included upon installation of R. Notice that we can set options for the raster package with `rasterOptions()`. These will help you see how long your code will take to run and help manage large objects.
+Most functions we will use are from the terra and sf packages. The terra, sf, and stars (not used here) packages are largely replacing older R packages, such as raster, used for for managing and manipulating spatial data. However, we will use a raster function at the end of this tutorial. 
 
 
 ```r
-library(raster) 
-  rasterOptions(progress = "text")  # show the progress of running commands 
-  rasterOptions(maxmemory = 1e+09)  # increase memory allowance 
-  rasterOptions(tmpdir = "temp_files")  # folder for temporary storage of large objects 
-library(rgdal) 
+library(terra)
 library(sf) 
 library(tigris)  # provides states() function 
 ```
 
-For package details try `help()` (e.g., `help("raster")`), and to view the necessary arguments of a function try `args()` (e.g., `args(cover)`).
+For package details try `help()` (e.g., `help("terra")`), and to view the necessary arguments of a function try `args()` (e.g., `args(cover)`).
 
 # Load Data
 
 > *Functions featured in this section:*  
-> **raster {raster}**  
-> creates a raster object  
-> **states {tigris}**  
-> downloads a shapefile of the United States that will be loaded as a SpatialPolygonsDataFrame object  
+> **terra::rast()**  
+> The `rast()` function from the terra package creates a 'SpatRaster' (spatial raster) object from a file  
+> **tigris::states()**  
+> The `states()` function for the tigris package downloads a shapefile of the United States that will be loaded as a SpatialPolygonsDataFrame object  
 
 Two GeoTiff files are needed to complete this tutorial, both from the dataset titled "CMS: Forest Carbon Stocks, Emissions, and Net Flux for the Conterminous US: 2005-2010" and freely available through the ORNL DAAC integrated web platform. The dataset provides maps of estimated carbon emissions in forests of the conterminous United States for the years 2006-2010. We will use the maps of carbon emissions caused by fire (GrossEmissions_v101_USA_Fire.tif) and insect damage (GrossEmissions_v101_USA_Insect.tif). These maps are provided at 100 meter spatial resolution in GeoTIFF format using Albers North America projection. Refer to the accompanying "README.md" for instructions on how to download the data.
 
-To begin, be sure to set your working directory using `setwd()` and the filepath to where you saved the data (we use the folder "./data/").
+To begin, be sure to set your working directory using `setwd()`. The code below assumes that the GeoTIFF file is saved in a folder called 'data' located under the working directory (e.g., "./data/GrossEmissions_v101_USA_Fire.tif"). 
 
-With the `raster()` function, load "GrossEmissions_v101_USA_Fire.tif" and name it *fire* then load "GrossEmissions_v101_USA_Insect.tif" and name it *insect*. The contents of these two files are stored as raster objects. *fire* and *insect* are the primary recipients of our manipulations throughout this exercise.
+With the `rast()` function, load "GrossEmissions_v101_USA_Fire.tif" and name it *fire* then load "GrossEmissions_v101_USA_Insect.tif" and name it *insect*. The contents of these two files are stored as SpatRaster objects. *fire* and *insect* are the primary focus of our manipulations throughout this exercise.
 
 The function `states()` downloads a shapefile of the United States from the United States Census Bureau. Name the shapefile *myStates*, and it will be stored as a simple feature data frame object.
 
 
 ```r
-fire <- raster("./data/GrossEmissions_v101_USA_Fire.tif") 
-insect <- raster("./data/GrossEmissions_v101_USA_Insect.tif") 
+fire <- rast("./data/GrossEmissions_v101_USA_Fire.tif")  # read GeoTIFF, store as SpatRaster object
+insect <- rast("./data/GrossEmissions_v101_USA_Insect.tif") 
 myStates <- states(cb = TRUE)  # will download a generalized (1:500k) file 
 ```
 
 # Check the Coordinate Reference System and Plot a Raster
 
 > *Functions featured in this section:*  
-> **crs {raster}**  
+> **terra::crs()**  
 > gets the coordinate reference system of a raster object  
 
 Use `print()` to view details about the internal data structure of the raster object we named *fire*.
@@ -88,72 +81,41 @@ print(fire)
 ```
 
 ```
-## class      : RasterLayer 
-## dimensions : 32818, 59444, 1950833192  (nrow, ncol, ncell)
-## resolution : 100, 100  (x, y)
-## extent     : -2972184, 2972216, 36233.75, 3318034  (xmin, xmax, ymin, ymax)
-## crs        : +proj=aea +lat_0=23 +lon_0=-96 +lat_1=29.5 +lat_2=45.5 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs 
-## source     : GrossEmissions_v101_USA_Fire.tif 
-## names      : GrossEmissions_v101_USA_Fire 
-## values     : 2, 373  (min, max)
+## class       : SpatRaster 
+## dimensions  : 32818, 59444, 1  (nrow, ncol, nlyr)
+## resolution  : 100, 100  (x, y)
+## extent      : -2972184, 2972216, 36233.75, 3318034  (xmin, xmax, ymin, ymax)
+## coord. ref. : USA_Contiguous_Albers_Equal_Area_Conic_USGS_version 
+## source      : GrossEmissions_v101_USA_Fire.tif 
+## name        : GrossEmissions_v101_USA_Fire 
+## min value   :                            2 
+## max value   :                          373
 ```
 
 The output lists important attributes of *fire*, like its dimensions, resolution, spatial extent, coordinate reference system, and the minimum and maximum values of the cells (i.e., carbon emissions).
 
+These two commands retrieves the coordinate reference system (CRS) of *fire* and display the CRS in 'WKT' (Well Known Text) and 'Proj4'  formats.
+
 
 ```r
-fire@crs 
+crs(fire)            # shows CRS in WKT format
 ```
 
 ```
-## Coordinate Reference System:
-## Deprecated Proj.4 representation:
-##  +proj=aea +lat_0=23 +lon_0=-96 +lat_1=29.5 +lat_2=45.5 +x_0=0 +y_0=0
-## +datum=NAD83 +units=m +no_defs 
-## WKT2 2019 representation:
-## PROJCRS["USA_Contiguous_Albers_Equal_Area_Conic_USGS_version",
-##     BASEGEOGCRS["NAD83",
-##         DATUM["North American Datum 1983",
-##             ELLIPSOID["GRS 1980",6378137,298.257222101004,
-##                 LENGTHUNIT["metre",1]]],
-##         PRIMEM["Greenwich",0,
-##             ANGLEUNIT["degree",0.0174532925199433]],
-##         ID["EPSG",4269]],
-##     CONVERSION["Albers Equal Area",
-##         METHOD["Albers Equal Area",
-##             ID["EPSG",9822]],
-##         PARAMETER["Latitude of false origin",23,
-##             ANGLEUNIT["degree",0.0174532925199433],
-##             ID["EPSG",8821]],
-##         PARAMETER["Longitude of false origin",-96,
-##             ANGLEUNIT["degree",0.0174532925199433],
-##             ID["EPSG",8822]],
-##         PARAMETER["Latitude of 1st standard parallel",29.5,
-##             ANGLEUNIT["degree",0.0174532925199433],
-##             ID["EPSG",8823]],
-##         PARAMETER["Latitude of 2nd standard parallel",45.5,
-##             ANGLEUNIT["degree",0.0174532925199433],
-##             ID["EPSG",8824]],
-##         PARAMETER["Easting at false origin",0,
-##             LENGTHUNIT["metre",1],
-##             ID["EPSG",8826]],
-##         PARAMETER["Northing at false origin",0,
-##             LENGTHUNIT["metre",1],
-##             ID["EPSG",8827]]],
-##     CS[Cartesian,2],
-##         AXIS["easting",east,
-##             ORDER[1],
-##             LENGTHUNIT["metre",1,
-##                 ID["EPSG",9001]]],
-##         AXIS["northing",north,
-##             ORDER[2],
-##             LENGTHUNIT["metre",1,
-##                 ID["EPSG",9001]]]]
+## [1] "PROJCRS[\"USA_Contiguous_Albers_Equal_Area_Conic_USGS_version\",\n    BASEGEOGCRS[\"NAD83\",\n        DATUM[\"North American Datum 1983\",\n            ELLIPSOID[\"GRS 1980\",6378137,298.257222101004,\n                LENGTHUNIT[\"metre\",1]]],\n        PRIMEM[\"Greenwich\",0,\n            ANGLEUNIT[\"degree\",0.0174532925199433]],\n        ID[\"EPSG\",4269]],\n    CONVERSION[\"Albers Equal Area\",\n        METHOD[\"Albers Equal Area\",\n            ID[\"EPSG\",9822]],\n        PARAMETER[\"Latitude of false origin\",23,\n            ANGLEUNIT[\"degree\",0.0174532925199433],\n            ID[\"EPSG\",8821]],\n        PARAMETER[\"Longitude of false origin\",-96,\n            ANGLEUNIT[\"degree\",0.0174532925199433],\n            ID[\"EPSG\",8822]],\n        PARAMETER[\"Latitude of 1st standard parallel\",29.5,\n            ANGLEUNIT[\"degree\",0.0174532925199433],\n            ID[\"EPSG\",8823]],\n        PARAMETER[\"Latitude of 2nd standard parallel\",45.5,\n            ANGLEUNIT[\"degree\",0.0174532925199433],\n            ID[\"EPSG\",8824]],\n        PARAMETER[\"Easting at false origin\",0,\n            LENGTHUNIT[\"metre\",1],\n            ID[\"EPSG\",8826]],\n        PARAMETER[\"Northing at false origin\",0,\n            LENGTHUNIT[\"metre\",1],\n            ID[\"EPSG\",8827]]],\n    CS[Cartesian,2],\n        AXIS[\"easting\",east,\n            ORDER[1],\n            LENGTHUNIT[\"metre\",1,\n                ID[\"EPSG\",9001]]],\n        AXIS[\"northing\",north,\n            ORDER[2],\n            LENGTHUNIT[\"metre\",1,\n                ID[\"EPSG\",9001]]]]"
 ```
 
-The above command retrieves the coordinate reference system (CRS) of *fire*. Notice the PROJ.4 representation. The first argument of the is "+proj=" and defines the projection. "aea" refers to the NAD83 / Albers NorthAm projection (also shown following "PROJCRS"), and "+units=m" tells us that the resolution of the raster object is in meters. Refer to the attributes of *fire* provided by `print()`. The resolution of the raster is "100, 100 (x, y)" meaning that each cell is 100 meters by 100 meters.
 
-Use the `plot()` function to make a simple image of *fire* and visualize the carbon emissions from fire damage across the forests of the conterminous United States between 2006 and 2010. According to the documentation for the dataset, gross carbon emissions were measured in megagrams of carbon per year per cell.
+```r
+crs(fire, proj=T)    # shows proj4 string 
+```
+
+```
+## [1] "+proj=aea +lat_0=23 +lon_0=-96 +lat_1=29.5 +lat_2=45.5 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs"
+```
+In the PROJ.4 representation, the first argument of the is "+proj=" and defines the projection. "aea" refers to the NAD83 / Albers NorthAm projection, and "+units=m" tells us that the resolution of the raster object is in meters. Refer to the attributes of *fire* provided by `print()` above. The resolution of the raster is "100, 100 (x, y)" meaning that each cell is 100 meters by 100 meters or one hectare (ha).
+
+Use the `plot()` function to make a simple image of *fire* and visualize the carbon emissions from fire damage across the forests of the conterminous United States between 2006 and 2010. According to the documentation for the dataset, gross carbon emissions were measured in megagrams of carbon per year (Mg C/y) per cell.
 
 
 ```r
@@ -161,12 +123,12 @@ plot(fire,
      main = "Gross Carbon Emissions from Fire Damage\n across CONUS Forests (2006-2010)", 
      xlab = "horizontal extent (m)", 
      ylab = "vertical extent (m)", 
-     legend.args = list(text = "Mg C/yr\n", side = 3), 
+     plg=list( title="\n      Mg C/ha/yr", size=c(0.7,1) ),
      colNA = "black", 
      box = FALSE) 
 ```
 
-![](edwebinar_mar19_ornldaac_tutorial_files/figure-html/unnamed-chunk-6-1.png)<!-- -->
+![](edwebinar_mar19_ornldaac_tutorial_smp2_files/figure-html/unnamed-chunk-7-1.png)<!-- -->
 
 The spatial extent of the raster object is displayed on the x- and y-axes. All NA cells (i.e., cells that have no values) are colored black for better visualization of fire damage. The legend offers the range of cell values and represents them using a default color theme.
 
@@ -181,7 +143,7 @@ identical(crs(fire), crs(insect))
 ## [1] TRUE
 ```
 
-The CRS for the two raster objects are identical.
+"TRUE" indicates that the CRS for the two raster objects are identical.
 
 Plot *insect* but change the content for the argument "main = ", which defines the main title of the plot.
 
@@ -191,30 +153,32 @@ plot(insect,
      main = "Gross Carbon Emissions from Insect Damage\n across CONUS Forests (2006-2010)", 
      xlab = "horizontal extent (m)", 
      ylab = "vertical extent (m)", 
-     legend.args = list(text = "Mg C/yr\n", side = 3), 
+     plg=list( title="\n      Mg C/ha/yr", size=c(0.7,1) ), 
      colNA = "black", 
      box = FALSE) 
 ```
 
-![](edwebinar_mar19_ornldaac_tutorial_files/figure-html/unnamed-chunk-8-1.png)<!-- -->
+![](edwebinar_mar19_ornldaac_tutorial_smp2_files/figure-html/unnamed-chunk-9-1.png)<!-- -->
 
 You can likely imagine an outline of the United States given the spatial data distribution of the two raster objects.
 
 # Select Data Within a Region of Interest
 
 > *Functions featured in this section:*  
-> **CRS {rgdal}**  
-> creates a CRS object using PROJ.4 arguments  
-> **st_transform {sf}**  
+> **terra::crs()**  
+> retrieves or sets the CRS for a spatial object  
+> **sf::st_transform()**  
 > provides re-projection given a CRS  
-> **st_bbox {sf}**  
-> provides bounding of a simple feature  
-> **crop {raster}**  
+> **sf::st_bbox()**  
+> retrieves the bounding box of a simple feature (sf) spatial object 
+> **terra::crop()**  
 > returns a geographic subset of an object as specified by an Extent object  
-> **mask {raster}**  
-> creates a new raster object with the same values as the input object, except for the cells that are NA in the second object  
+> **terra::mask()**  
+> creates a new raster object with the same values as the input object, except for the cells that are NA in the second object (the 'mask')  
 
-Next, we reduce the size of *fire* and *insect* by choosing a smaller extent of the raster objects. Use `print()` to view details about the internal data structure of the simple feature we named *myStates*.
+Next, we reduce the spatial extent of *fire* and *insect* to cover three states in the western US. We can select the states from the *myStates* feature then use it to crop the *fire* and *insect* rasters. 
+
+First, use `print()` to view details about the internal data structure of the simple feature we named *myStates*.
 
 
 ```r
@@ -228,44 +192,33 @@ print(myStates)
 ## Bounding box:  xmin: -179.1489 ymin: -14.5487 xmax: 179.7785 ymax: 71.36516
 ## Geodetic CRS:  NAD83
 ## First 10 features:
-##    STATEFP  STATENS    AFFGEOID GEOID STUSPS
-## 1       12 00294478 0400000US12    12     FL
-## 2       78 01802710 0400000US78    78     VI
-## 3       30 00767982 0400000US30    30     MT
-## 4       27 00662849 0400000US27    27     MN
-## 5       24 01714934 0400000US24    24     MD
-## 6       45 01779799 0400000US45    45     SC
-## 7       23 01779787 0400000US23    23     ME
-## 8       15 01779782 0400000US15    15     HI
-## 9       11 01702382 0400000US11    11     DC
-## 10      69 01779809 0400000US69    69     MP
-##                                            NAME LSAD        ALAND      AWATER
-## 1                                       Florida   00 138947364717 31362872853
-## 2                  United States Virgin Islands   00    348021896  1550236199
-## 3                                       Montana   00 376966832749  3869031338
-## 4                                     Minnesota   00 206230065476 18942261495
-## 5                                      Maryland   00  25151726296  6979340970
-## 6                                South Carolina   00  77864659170  5075874513
-## 7                                         Maine   00  79887659040 11745717739
-## 8                                        Hawaii   00  16634006436 11777792811
-## 9                          District of Columbia   00    158340389    18687196
-## 10 Commonwealth of the Northern Mariana Islands   00    472292529  4644252458
-##                          geometry
-## 1  MULTIPOLYGON (((-80.17628 2...
-## 2  MULTIPOLYGON (((-64.62799 1...
-## 3  MULTIPOLYGON (((-116.0491 4...
-## 4  MULTIPOLYGON (((-89.59206 4...
-## 5  MULTIPOLYGON (((-76.05015 3...
-## 6  MULTIPOLYGON (((-79.50795 3...
-## 7  MULTIPOLYGON (((-67.32259 4...
-## 8  MULTIPOLYGON (((-156.0608 1...
-## 9  MULTIPOLYGON (((-77.11976 3...
-## 10 MULTIPOLYGON (((146.051 16....
+##    STATEFP  STATENS    AFFGEOID GEOID STUSPS           NAME LSAD        ALAND
+## 1       56 01779807 0400000US56    56     WY        Wyoming   00 2.514587e+11
+## 2       02 01785533 0400000US02    02     AK         Alaska   00 1.478943e+12
+## 3       24 01714934 0400000US24    24     MD       Maryland   00 2.515199e+10
+## 4       60 01802701 0400000US60    60     AS American Samoa   00 1.977591e+08
+## 5       05 00068085 0400000US05    05     AR       Arkansas   00 1.346608e+11
+## 6       38 01779797 0400000US38    38     ND   North Dakota   00 1.786943e+11
+## 7       10 01779781 0400000US10    10     DE       Delaware   00 5.046732e+09
+## 8       66 01802705 0400000US66    66     GU           Guam   00 5.435558e+08
+## 9       35 00897535 0400000US35    35     NM     New Mexico   00 3.141986e+11
+## 10      49 01455989 0400000US49    49     UT           Utah   00 2.133551e+11
+##          AWATER                       geometry
+## 1    1867503716 MULTIPOLYGON (((-111.0546 4...
+## 2  245378425142 MULTIPOLYGON (((179.4825 51...
+## 3    6979074857 MULTIPOLYGON (((-76.05015 3...
+## 4    1307243751 MULTIPOLYGON (((-168.1458 -...
+## 5    3121950081 MULTIPOLYGON (((-94.61792 3...
+## 6    4414779956 MULTIPOLYGON (((-104.0487 4...
+## 7    1399179670 MULTIPOLYGON (((-75.56555 3...
+## 8     934337453 MULTIPOLYGON (((144.6454 13...
+## 9     726482113 MULTIPOLYGON (((-109.0502 3...
+## 10   6529973239 MULTIPOLYGON (((-114.053 37...
 ```
 
 *myStates* has 56 rows (features, i.e., polygons) and ten columns (variables or features).
 
-For this exercise, we will focus on carbon emissions for the states Idaho, Montana, and Wyoming. We can use column referencing and indexing to select all column information contained in *myStates*, but for only three rows (polygons). Name the resultant simple feature *threeStates*.
+For this exercise, we will focus on carbon emissions for Idaho, Montana, and Wyoming. We can use column referencing and indexing to select all column information contained in *myStates*, but for only three rows (polygons).  This code selects the polygons for which the 'NAME' is either Idaho, Montana, or Wyoming. These three polygons are saved in the resultant simple feature *threeStates*.
 
 
 ```r
@@ -282,13 +235,13 @@ print(threeStates)
 ## Bounding box:  xmin: -117.243 ymin: 40.99475 xmax: -104.0396 ymax: 49.00139
 ## Geodetic CRS:  NAD83
 ##    STATEFP  STATENS    AFFGEOID GEOID STUSPS    NAME LSAD        ALAND
-## 3       30 00767982 0400000US30    30     MT Montana   00 376966832749
-## 27      56 01779807 0400000US56    56     WY Wyoming   00 251458578211
-## 30      16 01779783 0400000US16    16     ID   Idaho   00 214049897859
+## 1       56 01779807 0400000US56    56     WY Wyoming   00 251458712294
+## 18      16 01779783 0400000US16    16     ID   Idaho   00 214049931578
+## 27      30 00767982 0400000US30    30     MT Montana   00 376973729130
 ##        AWATER                       geometry
-## 3  3869031338 MULTIPOLYGON (((-116.0491 4...
-## 27 1867637632 MULTIPOLYGON (((-111.0546 4...
-## 30 2391604238 MULTIPOLYGON (((-117.2427 4...
+## 1  1867503716 MULTIPOLYGON (((-111.0546 4...
+## 18 2391569647 MULTIPOLYGON (((-117.2427 4...
+## 27 3866634365 MULTIPOLYGON (((-116.0491 4...
 ```
 
 *threeStates* has only three rows, but the same number of columns as *myStates*.
@@ -300,7 +253,7 @@ What does *threeStates* look like plotted? We'll plot the geometry (i.e., the 10
 plot(threeStates$geometry)
 ```
 
-![](edwebinar_mar19_ornldaac_tutorial_files/figure-html/unnamed-chunk-11-1.png)<!-- -->
+![](edwebinar_mar19_ornldaac_tutorial_smp2_files/figure-html/unnamed-chunk-12-1.png)<!-- -->
 
 We can get the *fire* and *insect* data that occurs "within" *threeStates*. First, we must confirm that the three objects share a CRS before we can "match" them on a coordinate plane.
 
@@ -313,15 +266,15 @@ identical(crs(fire), crs(threeStates))
 ## [1] FALSE
 ```
 
-*threeStates* does not have the same CRS as *fire*, so we will make a simple feature object with the projection of *fire* using `st_transform()`. We also use `CRS()` to properly format the projection arguments of *fire*.
+"FALSE" indicates that *threeStates* does not have the same CRS as *fire*, so we will make a new version of these state polygons as a simple feature object that has same CRS as *fire*. The `st_transform()` from the sf packages will work. The function uses `crs=crs(fire)` to set the CRS of the new simple feature object to the same projection as *fire*.
 
 
 ```r
-transStates <- st_transform(threeStates, CRS(proj4string(fire)))
-plot(transStates$geometry)
+transStates <- st_transform(threeStates, crs=crs(fire) )
+plot(transStates$geometry)   # draw outline of the state polygons
 ```
 
-![](edwebinar_mar19_ornldaac_tutorial_files/figure-html/unnamed-chunk-13-1.png)<!-- -->
+![](edwebinar_mar19_ornldaac_tutorial_smp2_files/figure-html/unnamed-chunk-14-1.png)<!-- -->
 
 Plotting the geometry of the new object *transStates* shows that the projection has changed. Notice how the orientation of the polygons has shifted to match the NAD83 / Albers NorthAm projection.
 
@@ -329,7 +282,7 @@ Now that our objects share a CRS, we will compare the extent of *fire* and *tran
 
 
 ```r
-cat("fire extent\n"); fire@extent; cat("transStates extent\n"); st_bbox(transStates)
+cat("fire extent\n"); st_bbox(fire); cat("\ntransStates extent\n"); st_bbox(transStates)
 ```
 
 ```
@@ -337,14 +290,12 @@ cat("fire extent\n"); fire@extent; cat("transStates extent\n"); st_bbox(transSta
 ```
 
 ```
-## class      : Extent 
-## xmin       : -2972184 
-## xmax       : 2972216 
-## ymin       : 36233.75 
-## ymax       : 3318034
+##        xmin        ymin        xmax        ymax 
+## -2972184.50    36233.75  2972215.50  3318033.75
 ```
 
 ```
+## 
 ## transStates extent
 ```
 
@@ -353,14 +304,23 @@ cat("fire extent\n"); fire@extent; cat("transStates extent\n"); st_bbox(transSta
 ## -1715671.1  2027603.7  -595594.4  3059862.0
 ```
 
+
+```r
+plot(ext(fire),col='grey')                # bounding box of fire (grey)
+plot(ext(transStates),col='blue', add=T)  # bounding box of tranStates (blue)
+```
+
+![](edwebinar_mar19_ornldaac_tutorial_smp2_files/figure-html/unnamed-chunk-16-1.png)<!-- -->
+
+
 *fire* has a much larger extent than *transStates*.
 
-We will use the `crop()` function to reduce the extent of the two raster objects. Cropping will create a geographic subset of *fire* and *insect* as specified by the extent of *transStates*. We will name the new raster objects to reflect this manipulation.
+We will use the `crop()` function to reduce the extent of the two raster objects. Cropping will create a geographic subset of *fire* and *insect* as specified by the extent of *transStates*. We prepend "crop" to the names of the new raster objects to reflect this manipulation.
 
 
 ```r
 # this will take a minute to run
-cropFire <- crop(fire, transStates)  # crop(raster object, extent object)
+cropFire <- crop(fire, transStates)        # crop(raster object, extent object)
 cropInsect <- crop(insect, transStates)
 ```
 
@@ -368,38 +328,45 @@ Now when we plot *cropFire* and *cropInsect*, we will also plot *transStates* "o
 
 
 ```r
-plot(cropFire, 
+par(mfrow=c(1,1))
+mar.val <- c(3.1, 3.1, 3.1, 3.1)    # set plot margin values for maps: bot, lft, top, rght
+    plot(cropFire, 
      main = "Gross Carbon Emissions from Fire Damage\n across ID, MT, WY Forests (2006-2010)", 
+     # cex.main=0.85,
      xlab = "horizontal extent (m)", 
      ylab = "vertical extent (m)", 
-     legend.args = list(text = "Mg C/yr\n", side = 3), 
+     plg=list( title="\n      Mg C/ha/yr", size=c(0.7,1) ), 
      colNA = "black", 
+     # ext=(ext(cropFire)*1.5),
+     mar=mar.val,
      box = FALSE)
 plot(transStates$geometry, 
      border = "white", 
      add = TRUE)
 ```
 
-![](edwebinar_mar19_ornldaac_tutorial_files/figure-html/unnamed-chunk-16-1.png)<!-- -->
+![](edwebinar_mar19_ornldaac_tutorial_smp2_files/figure-html/unnamed-chunk-18-1.png)<!-- -->
 
 ```r
 plot(cropInsect, 
      main = "Gross Carbon Emissions from Insect Damage\n across ID, MT, WY Forests (2005-2010)", 
+     # cex.main=0.85,
      xlab = "horizontal extent (m)", 
      ylab = "vertical extent (m)", 
-     legend.args = list(text = "Mg C/yr\n", side = 3), 
+     plg=list( title="\n      Mg C/ha/yr", size=c(0.7,1) ), 
      colNA = "black", 
+     mar=mar.val,
      box = FALSE)
 plot(transStates$geometry, 
      border = "white", 
      add = TRUE)
 ```
 
-![](edwebinar_mar19_ornldaac_tutorial_files/figure-html/unnamed-chunk-16-2.png)<!-- -->
+![](edwebinar_mar19_ornldaac_tutorial_smp2_files/figure-html/unnamed-chunk-18-2.png)<!-- -->
 
-If you look closely at the cells "outside" the boundary of the *transStates* polygons, you can still see cells values. That's because `crop()` changed the extent of the two raster objects to match that of the simple feature object, but the boundary of the *transStates* polygons are rotated to fit the NAD83 / Albers NorthAm projection and does not extend to the entire rectangular extent of the raster objects.
+If you look closely at the cells "outside" the boundary of the *transStates* polygons, you can still see cells values. That's because `crop()` changed the extent of the two raster objects to match that of the simple feature object, but `crop()` did not change cells outside of the polygon boundaries.
 
-To remove those extraneous cell values, use the `mask()` function to create two new rasters, one for fire damage and one for insect damage. **Note:** You can use `mask()` or `crop()` in either order.
+To remove those extraneous cell values, use the `mask()` function to create two new rasters, one for fire damage and one for insect damage. `mask()` will convert raster cells outside of the state polygons to NA.  **Note:** You can use `mask()` or `crop()` in either order.
 
 
 ```r
@@ -416,69 +383,72 @@ plot(maskFire,
      main = "Gross Carbon Emissions from Fire Damage\n across ID, MT, WY Forests (2006-2010)", 
      xlab = "horizontal extent (m)", 
      ylab = "vertical extent (m)", 
-     legend.args = list(text = "Mg C/yr\n", side = 3), 
+     plg=list( title="\n      Mg C/ha/yr", size=c(0.7,1) ), 
      colNA = "black", 
+     mar=mar.val,
      box = FALSE) 
 plot(transStates$geometry, 
      border = "white", 
      add = TRUE) 
 ```
 
-![](edwebinar_mar19_ornldaac_tutorial_files/figure-html/unnamed-chunk-18-1.png)<!-- -->
+![](edwebinar_mar19_ornldaac_tutorial_smp2_files/figure-html/unnamed-chunk-20-1.png)<!-- -->
 
 ```r
 plot(maskInsect, 
      main = "Gross Carbon Emissions from Insect Damage\n across ID, MT, WY Forests (2005-2010)", 
      xlab = "horizontal extent (m)", 
      ylab = "vertical extent (m)", 
-     legend.args = list(text = "Mg C/yr\n", side = 3), 
+     plg=list( title="\\n      Mg C/ha/yr", size=c(0.7,1) ), 
      colNA = "black", 
+     mar=mar.val,
      box = FALSE) 
 plot(transStates$geometry, 
      border = "white", 
      add = TRUE) 
 ```
 
-![](edwebinar_mar19_ornldaac_tutorial_files/figure-html/unnamed-chunk-18-2.png)<!-- -->
+![](edwebinar_mar19_ornldaac_tutorial_smp2_files/figure-html/unnamed-chunk-20-2.png)<!-- -->
 
 These plots demonstrate that the extraneous cells has been removed from outside the boundary of the *transStates* polygons.
 
-# Examine Raster Value Summaries
+# Examine Summaries of Raster Values
 
-> *Functions featured in this fection:*  
-> **extract {raster}**  
+> *Functions featured in this section:*  
+> **terra::extract()**  
 > extracts values from a raster object at the locations of other spatial data  
 
 In this section, we will compare the three states by their carbon emissions from fire damage only.
 
-We will use the `extract()` function to collect the cell values of *maskFire* where the *transStates* simple feature object overlaps the raster object on their shared coordinate reference system. We will use `summary()` to examine the distribution of cell values that we collect.
+We will use terra's `extract()` function to collect the cell values of *maskFire* where the *transStates* simple feature object overlaps the raster object. We will use `summary()` to examine the distribution of cell values that we collect.
 
 
 ```r
-# this can take up to an hour to run, so I will load a saved copy for the demonstration
+# this can take up to an hour to run, so load a saved copy for the demonstration
 if(file.exists("./data/val_fireStates.Rds")) { 
   val_fireStates <- readRDS("./data/val_fireStates.rds") 
   summary(val_fireStates) 
   }else{ 
     val_fireStates <- extract(maskFire, transStates, df = TRUE)  # extract(raster object, extent object) 
     summary(val_fireStates) 
+    # saveRDS(val_fireStates, "./data/val_fireStates.Rds") # uncomment this line to save to file
   }
 ```
 
 ```
-##        ID        GrossEmissions_v101_USA_Fire
-##  Min.   :1.000   Min.   :  2                 
-##  1st Qu.:1.000   1st Qu.: 27                 
-##  Median :2.000   Median : 47                 
-##  Mean   :1.807   Mean   : 56                 
-##  3rd Qu.:3.000   3rd Qu.: 76                 
-##  Max.   :3.000   Max.   :333                 
-##                  NA's   :84454561
+##        ID       GrossEmissions_v101_USA_Fire
+##  Min.   :1.00   Min.   :  2                 
+##  1st Qu.:1.00   1st Qu.: 27                 
+##  Median :2.00   Median : 47                 
+##  Mean   :2.15   Mean   : 56                 
+##  3rd Qu.:3.00   3rd Qu.: 76                 
+##  Max.   :3.00   Max.   :333                 
+##                 NA's   :84454783
 ```
 
-There are two columns for *val_fireStates*. One is ID, which corresponds with the three states; 1 = Idaho, 2 = Montana, and 3 = Wyoming. The second column is a summary of all cell values across those three states. On average, 56 megagrams of carbon per year are a result of forest destruction by fire damage for all states combined.
+There are two columns for *val_fireStates*. One is ID, which corresponds with the three states; 1 = Idaho, 2 = Montana, and 3 = Wyoming. The second column is a summary of all cell values across those three states. On average, 56 megagrams of carbon per ha per year are a result of forest destruction by fire damage for all states combined.
 
-To look at the summary for cell values by state, we will use `subset()` to split the data frame into three. In the code below, we subest *val_fireStates* so that only the rows with a "1" for the ID number will be returned. We name the new object with the prefix "temp".
+To look at the summary for cell values by state, we will use `subset()` to split the data frame into three. In the code below, we subset *val_fireStates* so that only the rows with a "1" for the ID number will be returned. We name the new object with the prefix "temp".
 
 
 ```r
@@ -488,13 +458,13 @@ summary(temp_val_id)
 
 ```
 ##        ID    GrossEmissions_v101_USA_Fire
-##  Min.   :1   Min.   :  3                 
-##  1st Qu.:1   1st Qu.: 27                 
-##  Median :1   Median : 49                 
-##  Mean   :1   Mean   : 58                 
-##  3rd Qu.:1   3rd Qu.: 79                 
-##  Max.   :1   Max.   :254                 
-##              NA's   :37907760
+##  Min.   :1   Min.   :  4                 
+##  1st Qu.:1   1st Qu.: 24                 
+##  Median :1   Median : 43                 
+##  Mean   :1   Mean   : 53                 
+##  3rd Qu.:1   3rd Qu.: 70                 
+##  Max.   :1   Max.   :230                 
+##              NA's   :25282638
 ```
 
 The summary demonstrates that there is now only a single value is included in the ID column, and that the distribution of cell values has changed. This resultant data frame object is quite large and has more information than we need. We need only the second column and we don't care for the large number of NA's.
@@ -509,7 +479,7 @@ summary(val_id)
 
 ```
 ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-##    3.00   27.00   49.00   58.06   79.00  254.00
+##    4.00   24.00   43.00   53.46   70.00  230.00
 ```
 
 The resultant object, *val_id*, is a vector object (a single column of numbers) with no NA's.
@@ -524,8 +494,34 @@ temp_val_wy <- subset(val_fireStates, subset = ID %in% 3)
 val_wy <- temp_val_wy[which(!is.na(temp_val_wy$GrossEmissions_v101_USA_Fire)), 2] 
 ```
 
-What's the average and range of values for carbon emissions from fire damage within each state for the period 2006 to 2010?
+What's the total carbon emissions from fire for each state and the range of values within each state for the period 2006 to 2010?
 
+
+```r
+cat("Total emissions (/1000)\n")   # divide totals by 1000 to improve ability to compare
+```
+
+```
+## Total emissions (/1000)
+```
+
+```r
+cat("Idaho: ", sum(val_id)/1000, "  Montana: ", sum(val_mt)/1000, 
+        " Wyoming: ", sum(val_wy)/1000,"\n")   
+```
+
+```
+## Idaho:  2660.297   Montana:  20961.93  Wyoming:  10250.22
+```
+
+```r
+cat("\nDistribution of cell values\n")
+```
+
+```
+## 
+## Distribution of cell values
+```
 
 ```r
 cat("Idaho\n"); summary(val_id); cat("Montana\n"); summary(val_mt); cat("Wyoming\n"); summary(val_wy) 
@@ -537,7 +533,7 @@ cat("Idaho\n"); summary(val_id); cat("Montana\n"); summary(val_mt); cat("Wyoming
 
 ```
 ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-##    3.00   27.00   49.00   58.06   79.00  254.00
+##    4.00   24.00   43.00   53.46   70.00  230.00
 ```
 
 ```
@@ -546,7 +542,7 @@ cat("Idaho\n"); summary(val_id); cat("Montana\n"); summary(val_mt); cat("Wyoming
 
 ```
 ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-##    4.00   24.00   43.00   53.46   70.00  230.00
+##     2.0    27.0    47.0    55.2    75.0   333.0
 ```
 
 ```
@@ -555,63 +551,60 @@ cat("Idaho\n"); summary(val_id); cat("Montana\n"); summary(val_mt); cat("Wyoming
 
 ```
 ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-##     2.0    27.0    47.0    55.2    75.0   333.0
+##    3.00   27.00   49.00   58.06   79.00  254.00
 ```
 
-On average, Montana has the highest carbon emissions, but the maximum gross carbon emissions from a single cell occurred in Idaho.
+Wyoming has the highest total carbon emissions, but the maximum gross carbon emissions from a single cell occurred in Idaho.
 
 In addition to using `summary()`, we can create graphs to visualize carbon emissions from fire damage within each of the three states. The function `hist()` plots the frequency of cell values. We will set some arguments of the plot so that we can compare carbon emissions across all three states.
 
 
 ```r
-par(mfrow=c(2,2)) 
+par(mfrow=c(2,2), mar=c(3,3,3,3)) 
 hist(val_id, 
      main = "Idaho", 
      ylab = "number of cells", 
-     xlab = "megagrams of carbon per year (Mg C/yr)", 
+     xlab = "megagrams of carbon per ha per year (Mg C/ha/yr)", 
      ylim = c(0, 120000),  # same y-axis limit for all three states
      xlim = c(0, 350))  # same x-axis limit for all three states
 hist(val_mt, 
      main = "Montana", 
      ylab = "number of cells", 
-     xlab = "megagrams of carbon per year (Mg C/yr)", 
+     xlab = "megagrams of carbon per ha per year (Mg C/ha/yr)", 
      ylim = c(0, 120000), 
      xlim = c(0, 350)) 
 hist(val_wy, 
      main = "Wyoming", 
      ylab = "number of cells", 
-     xlab = "megagrams of carbon per year (Mg C/yr)", 
+     xlab = "megagrams of carbon per ha per year (Mg C/ha/yr)", 
      ylim = c(0, 120000), 
      xlim = c(0, 350)) 
 ```
 
-![](edwebinar_mar19_ornldaac_tutorial_files/figure-html/unnamed-chunk-24-1.png)<!-- -->
+![](edwebinar_mar19_ornldaac_tutorial_smp2_files/figure-html/unnamed-chunk-26-1.png)<!-- -->
 
 The histogram shows the number of times (on the y-axis) each unique cell value (on the x-axis) occurs in each state. In other words, it illustrates the variation in carbon emissions from fire damage within the three different states.
 
 # Reclassify Raster Values
 
 > *Functions featured in this section:*  
-> **reclassify {raster}**  
+> **reclassify()**  
 > reclassifies groups of values of a raster object to other values  
-> **calc {raster}**  
+> **calc()**  
 > calculates values for a new raster object from another raster object using a formula  
 
 Now we are going to change the values of our two raster objects using different methods.
 
-Beginning with *maskFire*, we will use the `calc()` function to code all cells that have fire damage to be two. To use `calc()`, we must define a function that will detect certain cell values and change them to other values.
+Beginning with *maskFire*, we copy  the raster object to *reclassFire*, convert all cells with values >0 to the value 2.
 
 
 ```r
-reclassFire <- calc(maskFire, 
-                    fun = function(x) { 
-                      x[x > 0] <- 2
-                      return(x) })
+reclassFire <- maskFire
+reclassFire[reclassFire >0] <- 2
 ```
 
-The function we defined changed all *maskFire* cell values that were greater than zero to be two.
 
-Check that our reclassification of *maskFire* worked as expected using `summary()`
+Check that our reclassification of *maskFire* worked as expected using `summary()`.  The pair of square brackets ("[]") after the raster name tells the summary command to read all values of the raster.
 
 
 ```r
@@ -619,8 +612,14 @@ summary(reclassFire[])
 ```
 
 ```
-##      Min.   1st Qu.    Median      Mean   3rd Qu.      Max.      NA's 
-##         2         2         2         2         2         2 115010681
+##  GrossEmissions_v101_USA_Fire
+##  Min.   :2                   
+##  1st Qu.:2                   
+##  Median :2                   
+##  Mean   :2                   
+##  3rd Qu.:2                   
+##  Max.   :2                   
+##  NA's   :115010680
 ```
 
 Yes, all values are two or NA.
@@ -634,23 +633,23 @@ plot(reclassFire,
      xlab = "horizontal extent (m)", 
      ylab = "vertical extent (m)", 
      legend = FALSE, 
-     col = "red", 
-     colNA = "black", 
+     col = "red", colNA = "black", 
+     mar=c(3.1, 1.1, 2.8, 1.1),    # bot,lft,top,right
      box = FALSE)
 plot(transStates$geometry, 
      border = "white", 
      add = TRUE)
 ```
 
-![](edwebinar_mar19_ornldaac_tutorial_files/figure-html/unnamed-chunk-27-1.png)<!-- -->
+![](edwebinar_mar19_ornldaac_tutorial_smp2_files/figure-html/unnamed-chunk-29-1.png)<!-- -->
 
-The plot of *reclassFire* now illustrates locations where there were carbon emissions owing to fire damaging the forest. Notice that we chose a single color to represent the presence of values using the argument "col = "red"".
+The plot of *reclassFire* now illustrates locations where there were carbon emissions due to forest fire. Notice that we chose a single color to represent the presence of values using the argument "col = "red"".
 
-Now we will reclassify all values of *maskInsect* that are greater than zero to be one, but instead of using `calc()`, we will use the `reclassify()` function. `reclassify()` uses a matrix to identify the target cell values and to what value those cells will change.
+Now we will reclassify all values of *maskInsect* that are greater than zero to be one (Note that minimum value of maskInsect is 2). This time, we will use the `classify()` function in the terra package. This function uses a matrix to identify the target cell values and to what value those cells will change.
 
 
 ```r
-reclassInsect <- reclassify(maskInsect, 
+reclassInsect <- classify(maskInsect, 
                             rcl = matrix(data = c(1, 285, 1),  # c(from value, to value, becomes)
                                          nrow = 1, ncol = 3))
 ```
@@ -665,8 +664,14 @@ summary(reclassInsect[])
 ```
 
 ```
-##      Min.   1st Qu.    Median      Mean   3rd Qu.      Max.      NA's 
-##         1         1         1         1         1         1 113254552
+##  GrossEmissions_v101_USA_Insect
+##  Min.   :1                     
+##  1st Qu.:1                     
+##  Median :1                     
+##  Mean   :1                     
+##  3rd Qu.:1                     
+##  Max.   :1                     
+##  NA's   :113254371
 ```
 
 All values are one or NA.
@@ -682,20 +687,21 @@ plot(reclassInsect,
      legend = FALSE, 
      col = "dark green", 
      colNA = "black", 
+     mar=c(3.1, 1.1, 3.1, 1.1),
      box = FALSE)
 plot(transStates$geometry, 
      border = "white", 
      add = TRUE)
 ```
 
-![](edwebinar_mar19_ornldaac_tutorial_files/figure-html/unnamed-chunk-30-1.png)<!-- -->
+![](edwebinar_mar19_ornldaac_tutorial_smp2_files/figure-html/unnamed-chunk-32-1.png)<!-- -->
 
-The plot illustrates locations where there were carbon emissions owing to insect damaging the forest, so now the information conveyed by the *maskInsect* raster object is presence or absence of insect damage.
+The plot illustrates locations where there were carbon emissions due to insect damage in forests, so now the information conveyed by the *maskInsect* raster object is presence or absence of insect damage.
 
 # Combine Two Rasters
 
 > *Functions featured in this section:*  
-> **cover {raster}**  
+> **cover()**  
 > replaces NA values in the first raster object with the values of the second  
 
 Next, we will join *reclassFire* and *reclassInsect* to form a single raster object. According to the documentation for this dataset, there are no overlapping, non-NA cells between the two raster objects. That is, if you were to combine the two rasters object, a cell could take only the value provided by *reclassFire* (i.e., two) or *reclassInsect* (i.e., one), or be NA. This allows us to use the `cover()` function to combine objects. `cover()` is unique because it will replace NA values of *reclassFire* with non-NA values of *reclassInsect*.
@@ -714,8 +720,14 @@ summary(fireInsect[])
 ```
 
 ```
-##      Min.   1st Qu.    Median      Mean   3rd Qu.      Max.      NA's 
-##         1         1         1         1         1         2 112648511
+##  GrossEmissions_v101_USA_Fire
+##  Min.   :1                   
+##  1st Qu.:1                   
+##  Median :1                   
+##  Mean   :1                   
+##  3rd Qu.:1                   
+##  Max.   :2                   
+##  NA's   :112648329
 ```
 
 The data distribution of the new raster object shows that the minimum value is now one (i.e., the insect damage value we specified during reclassification) and the maximum value is two (i.e., the fire damage value).
@@ -728,18 +740,17 @@ plot(fireInsect,
      main = "Locations of Forest Disturbance\n across ID, MT, WY Forests (2006-2010)", 
      xlab = "horizontal extent (m)", 
      ylab = "vertical extent (m)", 
-     legend.args = list(text = "    Disturbance\n", side = 3), 
-     breaks = c(0, 1, 2), 
-     col = c("dark green", "red"), 
-     axis.args = list(at = c(0.5, 1.5), labels = c("insect", "fire")), 
+     plg = list(legend=c("insect","fire"), title="  Disturbance"), 
+     col = c("dark green", "red"),
      colNA = "black", 
+     mar=c(3.1, 1.1, 3.1, 1.1),
      box = FALSE)
 plot(transStates$geometry, 
      border = "white", 
      add = TRUE)
 ```
 
-![](edwebinar_mar19_ornldaac_tutorial_files/figure-html/unnamed-chunk-33-1.png)<!-- -->
+![](edwebinar_mar19_ornldaac_tutorial_smp2_files/figure-html/unnamed-chunk-35-1.png)<!-- -->
 
 # Reproject and Write a Raster
 
@@ -749,16 +760,17 @@ plot(transStates$geometry,
 > **writeRaster {raster}**  
 > writes an entire raster object to a file  
 
-Reprojecting a raster in R is different than transforming the CRS as we did with the simple feature earlier in the exercise. To reproject a raster we use the `projectRaster()` function and the `CRS()` function to correctly format the projection information.
+Reprojecting a raster in R is different than transforming the CRS as we did with the simple feature earlier in the exercise. To reproject a raster, we use the `project()` function and the `crs()` function to provide the CRS  information. The nearest neighbor method ('near') is used to maintain cell values of 1 and 2.
 
 
 ```r
 # this will take several minutes to run 
-prjFireInsect <- projectRaster(fireInsect, 
-                               crs = CRS("+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs")) 
+prjFireInsect <- project(fireInsect, 
+                         crs("+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs"),
+                         method="near") 
 ```
 
-Now, check what the raster object we made using `print()`. 
+Now, check the properties of this new raster object using `print()`. 
 
 
 ```r
@@ -766,14 +778,15 @@ print(prjFireInsect)
 ```
 
 ```
-## class      : RasterLayer 
-## dimensions : 12086, 12796, 154652456  (nrow, ncol, ncell)
-## resolution : 0.00126, 0.000888  (x, y)
-## extent     : -119.2667, -103.1437, 39.60561, 50.33798  (xmin, xmax, ymin, ymax)
-## crs        : +proj=longlat +datum=WGS84 +no_defs 
-## source     : r_tmp_2021-12-02_151738_11960_52928.grd 
-## names      : layer 
-## values     : 1, 2  (min, max)
+## class       : SpatRaster 
+## dimensions  : 9169, 13781, 1  (nrow, ncol, nlyr)
+## resolution  : 0.001169079, 0.001169079  (x, y)
+## extent      : -119.2604, -103.1493, 39.61248, 50.33177  (xmin, xmax, ymin, ymax)
+## coord. ref. : +proj=longlat +datum=WGS84 +no_defs 
+## source      : spat_9b3epXJwfdbpc1H_16712.tif 
+## name        : GrossEmissions_v101_USA_Fire 
+## min value   :                            1 
+## max value   :                            2
 ```
 
 It's a new raster object named *prjFireInsect* that has the standard Geographic projection with latitude and longitude expressed in decimal degrees (DD) as its CRS.
@@ -786,19 +799,18 @@ plot(prjFireInsect,
      main = "Locations of Forest Disturbance\n across ID, MT, WY Forests (2006-2010)", 
      xlab = "longitude (DD)", 
      ylab = "latitude (DD)", 
-     legend.args = list(text = "    Disturbance\n", side = 3), 
-     las = 1, 
-     ext = prjFireInsect@extent/1.25, 
-     breaks = c(0, 1, 2), 
-     col = c("dark green", "red"), 
-     axis.args = list(at = c(0.5, 1.5), labels = c("insect", "fire")), 
+     plg = list(legend=c("insect","fire"), title="\n  Disturbance"), 
+     col = c("dark green", "red"),
+     mar=c(3.1, 1.1, 2.8, 1.1),
+     ext = st_bbox(prjFireInsect)/1.25,
      box = FALSE)
-plot(threeStates$geometry, 
-     border = "black", 
+
+plot(threeStates$geometry,
+     border = "black",
      add = TRUE)
 ```
 
-![](edwebinar_mar19_ornldaac_tutorial_files/figure-html/unnamed-chunk-36-1.png)<!-- -->
+![](edwebinar_mar19_ornldaac_tutorial_smp2_files/figure-html/unnamed-chunk-38-1.png)<!-- -->
 
 Let's use the `writeRaster()` function to save *prjFireInsect* to the data directory. We will save the file in \*.tif format so that the geographic information of the raster object is retrievable outside of R.
 
@@ -823,39 +835,41 @@ Now we are able to share the raster with others or open it in another program.
 # Export a Plot as PNG and Raster as KML
 
 > *Functions featured in this section:*  
-> **KML {raster}**  
+> **KML()**  
 > exports raster object data to a KML file  
 
-To save the final plot, we use `png()`. This function will open a graphics device that will save the plot we run in \*.png format. We will use the function `dev.off()` to tell R when we are finished plotting and want to close the graphics device.
+To save an imaage of the final plot, we use `png()` and repeat the plot() command. The png() function will open a graphics device that will save the plot we run in \*.png format. We will use the function `dev.off()` to tell R when we are finished plotting and want to close the graphics device.
 
 
 ```r
-png("prjFireInsect.png", width = 800, res = 80) 
+png("prjFireInsect.png", width=650, res=80) 
 plot(prjFireInsect, 
      main = "Locations of Forest Disturbance\n across ID, MT, WY Forests (2006-2010)", 
      xlab = "longitude (DD)", 
      ylab = "latitude (DD)", 
-     legend.args = list(text = "    Disturbance\n", side = 3), 
-     las = 1, 
-     ext = prjFireInsect@extent/1.25, 
-     breaks = c(0, 1, 2), 
-     col = c("dark green", "red"), 
-     axis.args = list(at = c(0.5, 1.5), labels = c("insect", "fire")), 
+     plg = list(legend=c("insect","fire"), title="\n  Disturbance"), 
+     col = c("dark green", "red"),
+     mar=c(3.1, 1.1, 2.8, 1.1),
+     ext = st_bbox(prjFireInsect)/1.25,
      box = FALSE)
-plot(threeStates$geometry, 
-     border = "black", 
+plot(threeStates$geometry,
+     border = "black",
      add = TRUE)
 dev.off() 
 ```
 
-Let's also save *prjFireInsect* in \*.kmz format. KML stands for Keyhole Markup Language, and KMZ is the compressed format. These formats were developed for geographic visualization in Google Earth.
+It might be useful to save *prjFireInsect* in \*.kmz format. KML stands for Keyhole Markup Language, and KMZ is the compressed format. These formats were developed for geographic visualization in Google Earth. 
+
+At present, R's terra package does not include an option to export a SpatRaster object to KML/KMZ. It is necessary to use the raster package.  First, *prjFireInsect* must be converted to a Raster object then saved using the raster package's KML() function.
 
 
 ```r
-KML(prjFireInsect, "./data/prjFireInsect.kmz", col = c("dark green", "red"), overwrite=TRUE) 
+library(raster)         # load the raster package
+prjFireInsect.r <- as(prjFireInsect, "Raster")      # convert to a 'Raster' object
+KML(prjFireInsect.r, "./data/prjFireInsect.kmz", col = c("dark green", "red"), overwrite=TRUE)
 ```
 
-We successfully saved the raster object as a KML file.
+We successfully saved the raster object as a KMZ file.
 
 ***
 This is the end to the tutorial. If you liked this tutorial, please tell us on [EarthData Forum](https://forum.earthdata.nasa.gov/). If you would like to make a suggestion for a new tutorial, please email uso@ornl.gov.
