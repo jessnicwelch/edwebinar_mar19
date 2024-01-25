@@ -1,7 +1,7 @@
 ---
 title: "Introduction to Geospatial Analysis in R"
 author: "ORNL DAAC https://daac.ornl.gov"
-date: "December 18, 2023"
+date: "January 25, 2024"
 output:
  pdf_document:
   toc: yes
@@ -36,12 +36,13 @@ install.packages("tigris", dependencies = TRUE)
 install.packages("raster", dependencies = TRUE)
 ```
 
-Most of the functions we will use are from the *terra* and *sf* packages. The *terra*, *sf*, and *stars* (not used here) packages are largely replacing older R packages, such as *raster*, for for managing and manipulating spatial data. However, we will use a *raster* function at the end of this tutorial. 
+Most of the functions we will use are from the *terra* and *sf* packages. The *terra*, *sf*, and *stars* (not used here) packages are largely replacing older R packages, such as *raster*, for for managing and manipulating spatial data. However, we will use a *raster* function at the end of this tutorial to export the final object in KML/KMZ format. 
 
 ```{r packages_load, message=FALSE, warning=FALSE, results="hide"}
 library(terra)
 library(sf) 
 library(tigris)  # provides access to TIGER shapefiles from US Census Bureau 
+library(raster)
 ```
 
 For package details, try `help()` (e.g., `help("terra")`), and to view the necessary arguments of a function try `args()` (e.g., `args(cover)`).
@@ -88,12 +89,12 @@ The output lists important attributes of *fire*, like its dimensions, resolution
 The next two commands retrieve the coordinate reference system (CRS) of *fire* and display the CRS in 'WKT' (Well Known Text) and 'Proj4'  formats.
 
 ```{r data_crs_1, message=FALSE, warning=FALSE}
-fire_wkt <- crs(fire)                       # CRS in WKT format
+fire_wkt <- crs(fire)  # CRS in WKT format
 writeLines(strwrap(fire_wkt, width = 70, exdent = 5)) # needed to control text wrapping
 ```
 
 ```{r data_crs_2, message=FALSE, warning=FALSE}
-fire_prj <- crs(fire, proj=T)             # CRS as proj4 string
+fire_prj <- crs(fire, proj=T)  # CRS as proj4 string
 writeLines(strwrap(fire_prj, width = 70, exdent = 5)) 
 ```
 In the PROJ.4 representation, the first argument is "+proj=" and defines the projection. "aea" refers to the `NAD83 / Albers NorthAm` projection (EPSG 42303), and "+units=m" tells us that the resolution of the raster object is in meters. Refer to the attributes of *fire* provided by `print()` above. The resolution of the raster is "100, 100 (x, y)" meaning that each cell is 100 meters by 100 meters, or one hectare (ha).
@@ -186,7 +187,7 @@ identical(crs(fire), crs(threeStates))
 
 ```{r states_5, message=FALSE, warning=FALSE}
 transStates <- st_transform(threeStates, crs=crs(fire) )
-plot(transStates$geometry)   # draw outline of the state polygons
+plot(transStates$geometry)  # draw outline of the state polygons
 ```
 
 Plotting the geometry of the new object *transStates* shows that the projection has changed. Notice how the orientation of the polygons has shifted to match the *NAD83 / Albers NorthAm projection*.
@@ -197,9 +198,11 @@ Now that our objects share a CRS, we will compare the extent of *fire* and *tran
 cat("fire extent\n"); st_bbox(fire)
 cat("\ntransStates extent\n"); st_bbox(transStates)
 ```
+
 To visualize the bounding boxes, use the `ext()` (i.e., extent) function with `plot()`.
+
 ```{r states_7, message=FALSE, warning=FALSE}
-plot(ext(fire), col='grey')                # bounding box of fire (grey)
+plot(ext(fire), col='grey')  # bounding box of fire (grey)
 plot(ext(transStates), col='blue', add=T)  # bounding box of tranStates (blue)
 ```
 
@@ -209,7 +212,7 @@ Reducing the extent of the *fire* and *insect* rasters will greatly speed up pro
 
 ```{r croppping, message=FALSE, warning=FALSE, results="hide"}
 # this will take a minute to run
-cropFire <- crop(fire, transStates)        # crop(raster object, extent object)
+cropFire <- crop(fire, transStates)  # crop(raster object, extent object)
 cropInsect <- crop(insect, transStates)
 ```
 
@@ -217,7 +220,7 @@ Now when we plot *cropFire* and *cropInsect*, we will also plot *transStates* "o
 
 ```{r crop_plot, message=FALSE, warning=FALSE}
 par(mfrow=c(1,1))
-mar.val <- c(3.1, 3.1, 3.1, 3.1)    # set plot margin values for maps: bot, lft, top, rght
+mar.val <- c(3.1, 3.1, 3.1, 3.1)  # set plot margin values for maps: bot,lft,top,rgt
     plot(cropFire, 
      main = "Gross Carbon Emissions from Fire Damage\n across ID, MT, WY Forests (2006-2010)", 
      xlab = "horizontal extent (m)", 
@@ -333,21 +336,21 @@ The resultant object, *val_id*, is a vector object (a single column of numbers) 
 We will do the same with *val_fire* for the states Montana and Wyoming.
 
 ```{r fire_summary_5, message=FALSE, warning=FALSE}
-temp_val_mt <- subset(val_fireStates, subset = ID %in% 2)   # Montana
+temp_val_mt <- subset(val_fireStates, subset = ID %in% 2)  # Montana
 val_mt <- temp_val_mt[!is.na(temp_val_mt$GrossEmissions_v101_USA_Fire), 2] 
-temp_val_wy <- subset(val_fireStates, subset = ID %in% 3)   # Wyoming
+temp_val_wy <- subset(val_fireStates, subset = ID %in% 3)  # Wyoming
 val_wy <- temp_val_wy[!is.na(temp_val_wy$GrossEmissions_v101_USA_Fire), 2] 
-rm(temp_val_id, temp_val_mt, temp_val_wy)     # clean up
+rm(temp_val_id, temp_val_mt, temp_val_wy)  # clean up
 ```
 
 What's the total carbon emissions from fire for each state and the range of values within each state for the period 2006 to 2010?
 
 ```{r fire_summary_6, message=FALSE, warning=FALSE}
-cat("Number of cells burned (ha)\n")   # divide totals by 1000 to improve ability to compare
+cat("Number of cells burned (ha)\n")  # divide totals by 1000 to improve ability to compare
 cat("Idaho: ", length(val_id), "  Montana: ", length(val_mt), 
         " Wyoming: ", length(val_wy),"\n")
 
-cat("\nTotal emissions (/1000)\n")   # divide totals by 1000 to improve ability to compare
+cat("\nTotal emissions (/1000)\n")  # divide totals by 1000 to improve ability to compare
 cat("Idaho: ", sum(val_id)/1000, "  Montana: ", sum(val_mt)/1000, 
         " Wyoming: ", sum(val_wy)/1000,"\n")   
 
@@ -400,8 +403,7 @@ reclassFire <- maskFire
 reclassFire[reclassFire >0] <- 2
 ```
 
-
-Check that our reclassification of *maskFire* worked as expected using `summary()`.  The pair of square brackets ("[]") after the raster name tells the summary command to read all values of the raster.
+Check that our reclassification of *maskFire* worked as expected using `summary()`. The pair of square brackets ("[]") after the raster name tells the summary command to read all values of the raster.
 
 ```{r reclass_2, message=FALSE, warning=FALSE}
 summary(reclassFire[]) 
@@ -418,7 +420,7 @@ plot(reclassFire,
      ylab = "vertical extent (m)", 
      legend = FALSE, 
      col = "red", colNA = "black", 
-     mar=c(3.1, 1.1, 2.8, 1.1),    # bot,lft,top,right
+     mar=c(3.1, 1.1, 2.8, 1.1),  # bot,lft,top,rgt
      box = FALSE)
 plot(transStates$geometry, 
      border = "white", 
@@ -592,18 +594,17 @@ dev.off()
 
 It might be useful to save *prjFireInsect* in \*.kmz format. KML stands for Keyhole Markup Language, and KMZ is the compressed version of KML format. These formats were developed for geographic visualization in Google Earth. 
 
-At present, R's *terra* package does not include an option to export a SpatRaster object to KML/KMZ. It is necessary to use the *raster* package.  First, *prjFireInsect* must be converted to a Raster object then saved using the raster package's KML() function.
+At present, the *terra* package does not include an option to export a SpatRaster object as a KML/KMZ; it is necessary to use the *raster* package. First, *prjFireInsect* must be converted to a Raster object then saved using the raster package's KML() function.
 
 ```{r reproject_kmz, message=FALSE, warning=FALSE, results="hide"}
-library(raster)         # load the raster package
-prjFireInsect.r <- as(prjFireInsect, "Raster")      # convert to a 'Raster' object
+prjFireInsect.r <- as(prjFireInsect, "Raster")  # convert to a 'Raster' object
 KML(prjFireInsect.r, "./data/prjFireInsect.kmz", col = c("dark green", "red"), overwrite=TRUE)
-
 ```
 
 We successfully saved the raster object as a KMZ file.
 
 ***
+
 This is the end to the tutorial. If you liked this tutorial, please tell us on [EarthData Forum](https://forum.earthdata.nasa.gov/). If you would like to make a suggestion for a new tutorial, please email uso@ornl.gov.
 
 There is a supplemental document included on GitHub that offers two additional sections, *Perform a Focal Analysis* and *Get Cell Coordinates*.

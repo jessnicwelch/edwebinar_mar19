@@ -1,0 +1,1365 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[
+]{article}
+\usepackage{amsmath,amssymb}
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math} % this also loads fontspec
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+\usepackage{lmodern}
+\ifPDFTeX\else
+  % xetex/luatex font selection
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\usepackage[margin=1in]{geometry}
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\usepackage{graphicx}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+% Set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+\usepackage{fontspec}
+\setmainfont{Calibri Light}
+\ifLuaTeX
+  \usepackage{selnolig}  % disable illegal ligatures
+\fi
+\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same}
+\hypersetup{
+  pdftitle={Introduction to Geospatial Analysis in R},
+  pdfauthor={ORNL DAAC https://daac.ornl.gov},
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+
+\title{Introduction to Geospatial Analysis in R}
+\usepackage{etoolbox}
+\makeatletter
+\providecommand{\subtitle}[1]{% add subtitle to \maketitle
+  \apptocmd{\@title}{\par {\large #1 \par}}{}{}
+}
+\makeatother
+\subtitle{NASA Earthdata Webinar}
+\author{ORNL DAAC \url{https://daac.ornl.gov}}
+\date{January 25, 2024}
+
+\begin{document}
+\maketitle
+
+{
+\setcounter{tocdepth}{2}
+\tableofcontents
+}
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\hypertarget{install-and-load-packages}{%
+\section{Install and Load Packages}\label{install-and-load-packages}}
+
+In addition to the built-in functionality of R, we will use four
+packages throughout this exercise. Packages are a collection of
+documentation, functions, and other items that someone has created and
+compiled for others to use in R. Install the packages, as well as their
+dependencies, using the function \texttt{install.packages()}.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{install.packages}\NormalTok{(}\StringTok{"terra"}\NormalTok{, }\AttributeTok{dependencies =} \ConstantTok{TRUE}\NormalTok{) }
+\FunctionTok{install.packages}\NormalTok{(}\StringTok{"sf"}\NormalTok{, }\AttributeTok{dependencies =} \ConstantTok{TRUE}\NormalTok{) }
+\FunctionTok{install.packages}\NormalTok{(}\StringTok{"tigris"}\NormalTok{, }\AttributeTok{dependencies =} \ConstantTok{TRUE}\NormalTok{)}
+\FunctionTok{install.packages}\NormalTok{(}\StringTok{"raster"}\NormalTok{, }\AttributeTok{dependencies =} \ConstantTok{TRUE}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+Most of the functions we will use are from the \emph{terra} and
+\emph{sf} packages. The \emph{terra}, \emph{sf}, and \emph{stars} (not
+used here) packages are largely replacing older R packages, such as
+\emph{raster}, for for managing and manipulating spatial data. However,
+we will use a \emph{raster} function at the end of this tutorial to
+export the final object in KML/KMZ format.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{library}\NormalTok{(terra)}
+\FunctionTok{library}\NormalTok{(sf) }
+\FunctionTok{library}\NormalTok{(tigris)  }\CommentTok{\# provides access to TIGER shapefiles from US Census Bureau }
+\FunctionTok{library}\NormalTok{(raster)}
+\end{Highlighting}
+\end{Shaded}
+
+For package details, try \texttt{help()} (e.g., \texttt{help("terra")}),
+and to view the necessary arguments of a function try \texttt{args()}
+(e.g., \texttt{args(cover)}).
+
+\hypertarget{load-data}{%
+\section{Load Data}\label{load-data}}
+
+\begin{quote}
+\emph{Functions featured in this section:}\\
+\textbf{terra::rast()}\\
+The \texttt{rast()} function from the terra package creates a
+`SpatRaster' (spatial raster) object from a file\\
+\textbf{tigris::states()}\\
+The \texttt{states()} function from the tigris package downloads a
+shapefile of the United States that will be loaded as a
+SpatialPolygonsDataFrame object
+\end{quote}
+
+Two GeoTiff files are needed to complete this tutorial, both from the
+dataset titled ``CMS: Forest Carbon Stocks, Emissions, and Net Flux for
+the Conterminous US: 2005-2010'' and freely available through the ORNL
+DAAC at\\
+\url{https://doi.org/10.3334/ORNLDAAC/1313}.
+
+The dataset provides maps of estimated carbon emissions in forests of
+the conterminous United States for the years 2006-2010. We will use the
+maps of carbon emissions caused by fire
+(\emph{GrossEmissions\_v101\_USA\_Fire.tif}) and insect damage
+(\emph{GrossEmissions\_v101\_USA\_Insect.tif}). These maps are provided
+at 100-meter spatial resolution in GeoTIFF format using Albers North
+America projection. Refer to the accompanying ``README.md'' for
+instructions on how to download the data.
+
+To begin, be sure to set your working directory using \texttt{setwd()}.
+The code below assumes that the GeoTIFF files are saved in a folder
+called `data' located under the working directory (e.g.,
+``./data/GrossEmissions\_v101\_USA\_Fire.tif'').
+
+With the \texttt{rast()} function, load
+\emph{GrossEmissions\_v101\_USA\_Fire.tif} and name it \emph{fire}, then
+load \emph{GrossEmissions\_v101\_USA\_Insect.tif} and name it
+\emph{insect}. The contents of these two files are stored as SpatRaster
+objects; \emph{fire} and \emph{insect} are the primary focus of our
+manipulations throughout this exercise.
+
+The function \texttt{states()} downloads a shapefile of the United
+States from the United States Census Bureau. It will be stored as a
+simple feature data frame object named \emph{myStates}.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{fire }\OtherTok{\textless{}{-}} \FunctionTok{rast}\NormalTok{(}\StringTok{"./data/GrossEmissions\_v101\_USA\_Fire.tif"}\NormalTok{)  }\CommentTok{\# read GeoTIFF, store as SpatRaster object}
+\NormalTok{insect }\OtherTok{\textless{}{-}} \FunctionTok{rast}\NormalTok{(}\StringTok{"./data/GrossEmissions\_v101\_USA\_Insect.tif"}\NormalTok{) }
+\NormalTok{myStates }\OtherTok{\textless{}{-}} \FunctionTok{states}\NormalTok{(}\AttributeTok{cb =} \ConstantTok{TRUE}\NormalTok{, }\AttributeTok{progress\_bar=}\ConstantTok{FALSE}\NormalTok{)  }\CommentTok{\# will download a generalized (1:500k) file }
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{check-the-coordinate-reference-system-and-plot-a-raster}{%
+\section{Check the Coordinate Reference System and Plot a
+Raster}\label{check-the-coordinate-reference-system-and-plot-a-raster}}
+
+\begin{quote}
+\emph{Functions featured in this section:}\\
+\textbf{terra::crs()}\\
+gets the coordinate reference system of a raster object
+\end{quote}
+
+Use \texttt{print()} to view details about the internal data structure
+of the raster object we named \emph{fire}.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{print}\NormalTok{(fire) }
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## class       : SpatRaster 
+## dimensions  : 32818, 59444, 1  (nrow, ncol, nlyr)
+## resolution  : 100, 100  (x, y)
+## extent      : -2972184, 2972216, 36233.75, 3318034  (xmin, xmax, ymin, ymax)
+## coord. ref. : USA_Contiguous_Albers_Equal_Area_Conic_USGS_version 
+## source      : GrossEmissions_v101_USA_Fire.tif 
+## name        : GrossEmissions_v101_USA_Fire 
+## min value   :                            2 
+## max value   :                          373
+\end{verbatim}
+
+The output lists important attributes of \emph{fire}, like its
+dimensions, resolution, spatial extent, coordinate reference system, and
+the minimum and maximum values of the cells (i.e., carbon emissions).
+
+The next two commands retrieve the coordinate reference system (CRS) of
+\emph{fire} and display the CRS in `WKT' (Well Known Text) and `Proj4'
+formats.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{fire\_wkt }\OtherTok{\textless{}{-}} \FunctionTok{crs}\NormalTok{(fire)  }\CommentTok{\# CRS in WKT format}
+\FunctionTok{writeLines}\NormalTok{(}\FunctionTok{strwrap}\NormalTok{(fire\_wkt, }\AttributeTok{width =} \DecValTok{70}\NormalTok{, }\AttributeTok{exdent =} \DecValTok{5}\NormalTok{)) }\CommentTok{\# needed to control text wrapping}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## PROJCRS["USA_Contiguous_Albers_Equal_Area_Conic_USGS_version",
+##      BASEGEOGCRS["NAD83", DATUM["North American Datum 1983",
+##      ELLIPSOID["GRS 1980",6378137,298.257222101004,
+##      LENGTHUNIT["metre",1]]], PRIMEM["Greenwich",0,
+##      ANGLEUNIT["degree",0.0174532925199433]], ID["EPSG",4269]],
+##      CONVERSION["Albers Equal Area", METHOD["Albers Equal Area",
+##      ID["EPSG",9822]], PARAMETER["Latitude of false origin",23,
+##      ANGLEUNIT["degree",0.0174532925199433], ID["EPSG",8821]],
+##      PARAMETER["Longitude of false origin",-96,
+##      ANGLEUNIT["degree",0.0174532925199433], ID["EPSG",8822]],
+##      PARAMETER["Latitude of 1st standard parallel",29.5,
+##      ANGLEUNIT["degree",0.0174532925199433], ID["EPSG",8823]],
+##      PARAMETER["Latitude of 2nd standard parallel",45.5,
+##      ANGLEUNIT["degree",0.0174532925199433], ID["EPSG",8824]],
+##      PARAMETER["Easting at false origin",0, LENGTHUNIT["metre",1],
+##      ID["EPSG",8826]], PARAMETER["Northing at false origin",0,
+##      LENGTHUNIT["metre",1], ID["EPSG",8827]]], CS[Cartesian,2],
+##      AXIS["easting",east, ORDER[1], LENGTHUNIT["metre",1,
+##      ID["EPSG",9001]]], AXIS["northing",north, ORDER[2],
+##      LENGTHUNIT["metre",1, ID["EPSG",9001]]]]
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{fire\_prj }\OtherTok{\textless{}{-}} \FunctionTok{crs}\NormalTok{(fire, }\AttributeTok{proj=}\NormalTok{T)  }\CommentTok{\# CRS as proj4 string}
+\FunctionTok{writeLines}\NormalTok{(}\FunctionTok{strwrap}\NormalTok{(fire\_prj, }\AttributeTok{width =} \DecValTok{70}\NormalTok{, }\AttributeTok{exdent =} \DecValTok{5}\NormalTok{)) }
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## +proj=aea +lat_0=23 +lon_0=-96 +lat_1=29.5 +lat_2=45.5 +x_0=0 +y_0=0
+##      +datum=NAD83 +units=m +no_defs
+\end{verbatim}
+
+In the PROJ.4 representation, the first argument is ``+proj='' and
+defines the projection. ``aea'' refers to the
+\texttt{NAD83\ /\ Albers\ NorthAm} projection (EPSG 42303), and
+``+units=m'' tells us that the resolution of the raster object is in
+meters. Refer to the attributes of \emph{fire} provided by
+\texttt{print()} above. The resolution of the raster is ``100, 100 (x,
+y)'' meaning that each cell is 100 meters by 100 meters, or one hectare
+(ha).
+
+Use the \texttt{plot()} function to make a simple image of \emph{fire}
+and visualize the carbon emissions from fire damage across the forests
+of the conterminous United States between 2006 and 2010. According to
+the documentation for the dataset, gross carbon emissions were measured
+in megagrams of carbon per year (Mg C/y) per cell.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{plot}\NormalTok{(fire, }
+     \AttributeTok{main =} \StringTok{"Gross Carbon Emissions from Fire Damage}\SpecialCharTok{\textbackslash{}n}\StringTok{ across CONUS Forests (2006{-}2010)"}\NormalTok{, }
+     \AttributeTok{xlab =} \StringTok{"horizontal extent (m)"}\NormalTok{, }
+     \AttributeTok{ylab =} \StringTok{"vertical extent (m)"}\NormalTok{, }
+     \AttributeTok{plg=}\FunctionTok{list}\NormalTok{( }\AttributeTok{title=}\StringTok{"}\SpecialCharTok{\textbackslash{}n}\StringTok{      Mg C/ha/yr"}\NormalTok{, }\AttributeTok{size=}\FunctionTok{c}\NormalTok{(}\FloatTok{0.7}\NormalTok{,}\DecValTok{1}\NormalTok{) ),}
+     \AttributeTok{colNA =} \StringTok{"black"}\NormalTok{, }
+     \AttributeTok{box =} \ConstantTok{FALSE}\NormalTok{) }
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{edwebinar_mar19_ornldaac_tutorial_files/figure-latex/raster_plot_1-1.pdf}
+
+The spatial extent of the raster object is displayed on the x- and
+y-axes. All NA cells (i.e., cells that have no values) are colored black
+for better visualization of fire damage. The legend offers the range of
+cell values and represents them using a default color theme. Because the
+extent of this object covers the conterminous US, we cannot see much
+spatial detail in this figure.
+
+Let's examine the raster object we named \emph{insect}. The function
+\texttt{crs()} retrieves the CRS information for each raster object.
+Then, we use \texttt{identical()} to determine if \emph{fire} and
+\emph{insect} have the same CRS.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{identical}\NormalTok{(}\FunctionTok{crs}\NormalTok{(fire), }\FunctionTok{crs}\NormalTok{(insect)) }
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] TRUE
+\end{verbatim}
+
+``TRUE'' indicates that the CRS for the two raster objects have the same
+CRS.
+
+Plot \emph{insect} but change the content for the argument ``main ='',
+which defines the main title of the plot.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{plot}\NormalTok{(insect, }
+     \AttributeTok{main =} \StringTok{"Gross Carbon Emissions from Insect Damage}\SpecialCharTok{\textbackslash{}n}\StringTok{ across CONUS Forests (2006{-}2010)"}\NormalTok{, }
+     \AttributeTok{xlab =} \StringTok{"horizontal extent (m)"}\NormalTok{, }
+     \AttributeTok{ylab =} \StringTok{"vertical extent (m)"}\NormalTok{, }
+     \AttributeTok{plg=}\FunctionTok{list}\NormalTok{( }\AttributeTok{title=}\StringTok{"}\SpecialCharTok{\textbackslash{}n}\StringTok{      Mg C/ha/yr"}\NormalTok{, }\AttributeTok{size=}\FunctionTok{c}\NormalTok{(}\FloatTok{0.7}\NormalTok{,}\DecValTok{1}\NormalTok{) ), }
+     \AttributeTok{colNA =} \StringTok{"black"}\NormalTok{, }
+     \AttributeTok{box =} \ConstantTok{FALSE}\NormalTok{) }
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{edwebinar_mar19_ornldaac_tutorial_files/figure-latex/raster_plot_2-1.pdf}
+
+You can likely imagine an outline of the United States given the
+distribution of spatial data in the two raster objects.
+
+\hypertarget{select-data-within-a-region-of-interest}{%
+\section{Select Data Within a Region of
+Interest}\label{select-data-within-a-region-of-interest}}
+
+\begin{quote}
+\emph{Functions featured in this section:}\\
+\textbf{terra::crs()}\\
+retrieves or sets the CRS for a spatial object\\
+\textbf{sf::st\_transform()}\\
+provides re-projection given a CRS\\
+\textbf{sf::st\_bbox()}\\
+retrieves the bounding box of a simple feature (sf) spatial object
+\textbf{terra::crop()}\\
+returns a geographic subset of an object as specified by an Extent
+object\\
+\textbf{terra::mask()}\\
+creates a new raster object with the same values as the input object,
+except for the cells that are NA in the second object (the `mask')
+\end{quote}
+
+Next, we reduce the spatial extent of \emph{fire} and \emph{insect} to
+focus on three states in the western US. We can select the states from
+the \emph{myStates} to create a new feature then use it to crop the
+\emph{fire} and \emph{insect} rasters.
+
+First, use \texttt{print()} to view details about the internal data
+structure of the simple feature we named \emph{myStates}.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{print}\NormalTok{(myStates)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Simple feature collection with 56 features and 9 fields
+## Geometry type: MULTIPOLYGON
+## Dimension:     XY
+## Bounding box:  xmin: -179.1489 ymin: -14.5487 xmax: 179.7785 ymax: 71.36516
+## Geodetic CRS:  NAD83
+## First 10 features:
+##    STATEFP  STATENS    AFFGEOID GEOID STUSPS           NAME LSAD        ALAND
+## 1       56 01779807 0400000US56    56     WY        Wyoming   00 2.514587e+11
+## 2       02 01785533 0400000US02    02     AK         Alaska   00 1.478943e+12
+## 3       24 01714934 0400000US24    24     MD       Maryland   00 2.515199e+10
+## 4       60 01802701 0400000US60    60     AS American Samoa   00 1.977591e+08
+## 5       05 00068085 0400000US05    05     AR       Arkansas   00 1.346608e+11
+## 6       38 01779797 0400000US38    38     ND   North Dakota   00 1.786943e+11
+## 7       10 01779781 0400000US10    10     DE       Delaware   00 5.046732e+09
+## 8       66 01802705 0400000US66    66     GU           Guam   00 5.435558e+08
+## 9       35 00897535 0400000US35    35     NM     New Mexico   00 3.141986e+11
+## 10      49 01455989 0400000US49    49     UT           Utah   00 2.133551e+11
+##          AWATER                       geometry
+## 1    1867503716 MULTIPOLYGON (((-111.0546 4...
+## 2  245378425142 MULTIPOLYGON (((179.4825 51...
+## 3    6979074857 MULTIPOLYGON (((-76.05015 3...
+## 4    1307243751 MULTIPOLYGON (((-168.1458 -...
+## 5    3121950081 MULTIPOLYGON (((-94.61792 3...
+## 6    4414779956 MULTIPOLYGON (((-104.0487 4...
+## 7    1399179670 MULTIPOLYGON (((-75.56555 3...
+## 8     934337453 MULTIPOLYGON (((144.6454 13...
+## 9     726482113 MULTIPOLYGON (((-109.0502 3...
+## 10   6529973239 MULTIPOLYGON (((-114.053 37...
+\end{verbatim}
+
+\emph{myStates} has 56 features (i.e., polygons) each with 9 attribute
+fields. This \emph{sf} object can be thought of a dataframe with 56 rows
+and ten columns (variables or features). The columns include the 9
+attribute fields plus a ``geometry'' column.
+
+For this exercise, we will focus on carbon emissions for Idaho, Montana,
+and Wyoming. We can use column referencing and indexing to select all
+column information contained in \emph{myStates}, but for only three rows
+(polygons). This code selects the polygons for which the `NAME' is
+either Idaho, Montana, or Wyoming. These three polygons are saved in the
+resultant simple feature \emph{threeStates}.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{threeStates }\OtherTok{\textless{}{-}}\NormalTok{ myStates[myStates}\SpecialCharTok{$}\NormalTok{NAME }\SpecialCharTok{==} \StringTok{"Idaho"} \SpecialCharTok{|} 
+\NormalTok{                        myStates}\SpecialCharTok{$}\NormalTok{NAME }\SpecialCharTok{==} \StringTok{"Montana"} \SpecialCharTok{|} 
+\NormalTok{                        myStates}\SpecialCharTok{$}\NormalTok{NAME }\SpecialCharTok{==} \StringTok{"Wyoming"}\NormalTok{, ]}
+\NormalTok{threeStates }\OtherTok{\textless{}{-}}\NormalTok{ threeStates[}\FunctionTok{order}\NormalTok{(threeStates}\SpecialCharTok{$}\NormalTok{NAME),]  }\CommentTok{\# sort by name: ID, MT, WY}
+\FunctionTok{print}\NormalTok{(threeStates)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Simple feature collection with 3 features and 9 fields
+## Geometry type: MULTIPOLYGON
+## Dimension:     XY
+## Bounding box:  xmin: -117.243 ymin: 40.99475 xmax: -104.0396 ymax: 49.00139
+## Geodetic CRS:  NAD83
+##    STATEFP  STATENS    AFFGEOID GEOID STUSPS    NAME LSAD        ALAND
+## 18      16 01779783 0400000US16    16     ID   Idaho   00 214049931578
+## 27      30 00767982 0400000US30    30     MT Montana   00 376973729130
+## 1       56 01779807 0400000US56    56     WY Wyoming   00 251458712294
+##        AWATER                       geometry
+## 18 2391569647 MULTIPOLYGON (((-117.2427 4...
+## 27 3866634365 MULTIPOLYGON (((-116.0491 4...
+## 1  1867503716 MULTIPOLYGON (((-111.0546 4...
+\end{verbatim}
+
+\emph{threeStates} has only three rows, but the same number of columns
+as \emph{myStates}.
+
+What does \emph{threeStates} look like plotted? We'll plot the geometry
+(i.e., the 10th column) of \emph{threeStates} so we only see the
+outline.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{plot}\NormalTok{(threeStates}\SpecialCharTok{$}\NormalTok{geometry)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{edwebinar_mar19_ornldaac_tutorial_files/figure-latex/states_3-1.pdf}
+
+We can get the \emph{fire} and \emph{insect} data that occurs ``within''
+\emph{threeStates}. First, we must confirm that the three objects share
+the same CRS before we can overlay or otherwise combine information from
+them. Some GIS software, such as QGIS or ArcGIS, can automatically
+combine data layers having different CRS, but that is not a default
+capability with R.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{identical}\NormalTok{(}\FunctionTok{crs}\NormalTok{(fire), }\FunctionTok{crs}\NormalTok{(threeStates))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] FALSE
+\end{verbatim}
+
+``FALSE'' indicates that \emph{threeStates} does not have the same CRS
+as \emph{fire}, so we will make a new version of these state polygons
+that has \emph{fire}'s CRS. The \texttt{st\_transform()} from the
+\emph{sf} package will work. This function uses \texttt{crs=crs(fire)}
+to set the CRS of the new simple feature object to the same projection
+as \emph{fire}.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{transStates }\OtherTok{\textless{}{-}} \FunctionTok{st\_transform}\NormalTok{(threeStates, }\AttributeTok{crs=}\FunctionTok{crs}\NormalTok{(fire) )}
+\FunctionTok{plot}\NormalTok{(transStates}\SpecialCharTok{$}\NormalTok{geometry)  }\CommentTok{\# draw outline of the state polygons}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{edwebinar_mar19_ornldaac_tutorial_files/figure-latex/states_5-1.pdf}
+
+Plotting the geometry of the new object \emph{transStates} shows that
+the projection has changed. Notice how the orientation of the polygons
+has shifted to match the \emph{NAD83 / Albers NorthAm projection}.
+
+Now that our objects share a CRS, we will compare the extent of
+\emph{fire} and \emph{transStates}. Use the \texttt{st\_bbox()} function
+to view the bounding (i.e., bounding box) of \emph{transStates} and
+\emph{fire}.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{cat}\NormalTok{(}\StringTok{"fire extent}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{); }\FunctionTok{st\_bbox}\NormalTok{(fire)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## fire extent
+\end{verbatim}
+
+\begin{verbatim}
+##        xmin        ymin        xmax        ymax 
+## -2972184.50    36233.75  2972215.50  3318033.75
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{cat}\NormalTok{(}\StringTok{"}\SpecialCharTok{\textbackslash{}n}\StringTok{transStates extent}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{); }\FunctionTok{st\_bbox}\NormalTok{(transStates)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## transStates extent
+\end{verbatim}
+
+\begin{verbatim}
+##       xmin       ymin       xmax       ymax 
+## -1715671.1  2027603.7  -595594.4  3059862.0
+\end{verbatim}
+
+To visualize the bounding boxes, use the \texttt{ext()} (i.e., extent)
+function with \texttt{plot()}.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{plot}\NormalTok{(}\FunctionTok{ext}\NormalTok{(fire), }\AttributeTok{col=}\StringTok{\textquotesingle{}grey\textquotesingle{}}\NormalTok{)  }\CommentTok{\# bounding box of fire (grey)}
+\FunctionTok{plot}\NormalTok{(}\FunctionTok{ext}\NormalTok{(transStates), }\AttributeTok{col=}\StringTok{\textquotesingle{}blue\textquotesingle{}}\NormalTok{, }\AttributeTok{add=}\NormalTok{T)  }\CommentTok{\# bounding box of tranStates (blue)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{edwebinar_mar19_ornldaac_tutorial_files/figure-latex/states_7-1.pdf}
+
+The raster \emph{fire} has a much larger extent than \emph{transStates}
+because \emph{fire} covers the entire conterminous US.
+
+Reducing the extent of the \emph{fire} and \emph{insect} rasters will
+greatly speed up processing and reduce the size of saved files. The
+\texttt{crop()} function will serve this purpose. Cropping will create a
+geographic subset of \emph{fire} and \emph{insect} as specified by the
+extent of \emph{transStates}. We prepend ``crop'' to the names of the
+new raster objects to reflect this manipulation.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# this will take a minute to run}
+\NormalTok{cropFire }\OtherTok{\textless{}{-}} \FunctionTok{crop}\NormalTok{(fire, transStates)  }\CommentTok{\# crop(raster object, extent object)}
+\NormalTok{cropInsect }\OtherTok{\textless{}{-}} \FunctionTok{crop}\NormalTok{(insect, transStates)}
+\end{Highlighting}
+\end{Shaded}
+
+Now when we plot \emph{cropFire} and \emph{cropInsect}, we will also
+plot \emph{transStates} ``on top'' to envision how carbon emissions are
+distributed across the three states.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{par}\NormalTok{(}\AttributeTok{mfrow=}\FunctionTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{,}\DecValTok{1}\NormalTok{))}
+\NormalTok{mar.val }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(}\FloatTok{3.1}\NormalTok{, }\FloatTok{3.1}\NormalTok{, }\FloatTok{3.1}\NormalTok{, }\FloatTok{3.1}\NormalTok{)  }\CommentTok{\# set plot margin values for maps: bot,lft,top,rgt}
+    \FunctionTok{plot}\NormalTok{(cropFire, }
+     \AttributeTok{main =} \StringTok{"Gross Carbon Emissions from Fire Damage}\SpecialCharTok{\textbackslash{}n}\StringTok{ across ID, MT, WY Forests (2006{-}2010)"}\NormalTok{, }
+     \AttributeTok{xlab =} \StringTok{"horizontal extent (m)"}\NormalTok{, }
+     \AttributeTok{ylab =} \StringTok{"vertical extent (m)"}\NormalTok{, }
+     \AttributeTok{plg=}\FunctionTok{list}\NormalTok{( }\AttributeTok{title=}\StringTok{"}\SpecialCharTok{\textbackslash{}n}\StringTok{      Mg C/ha/yr"}\NormalTok{, }\AttributeTok{size=}\FunctionTok{c}\NormalTok{(}\FloatTok{0.7}\NormalTok{,}\DecValTok{1}\NormalTok{) ), }
+     \AttributeTok{colNA =} \StringTok{"black"}\NormalTok{, }
+     \AttributeTok{mar=}\NormalTok{mar.val,}
+     \AttributeTok{box =} \ConstantTok{FALSE}\NormalTok{)}
+\FunctionTok{plot}\NormalTok{(transStates}\SpecialCharTok{$}\NormalTok{geometry, }
+     \AttributeTok{border =} \StringTok{"white"}\NormalTok{, }
+     \AttributeTok{add =} \ConstantTok{TRUE}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{edwebinar_mar19_ornldaac_tutorial_files/figure-latex/crop_plot-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{plot}\NormalTok{(cropInsect, }
+     \AttributeTok{main =} \StringTok{"Gross Carbon Emissions from Insect Damage}\SpecialCharTok{\textbackslash{}n}\StringTok{ across ID, MT, WY Forests (2005{-}2010)"}\NormalTok{, }
+     \CommentTok{\# cex.main=0.85,}
+     \AttributeTok{xlab =} \StringTok{"horizontal extent (m)"}\NormalTok{, }
+     \AttributeTok{ylab =} \StringTok{"vertical extent (m)"}\NormalTok{, }
+     \AttributeTok{plg=}\FunctionTok{list}\NormalTok{( }\AttributeTok{title=}\StringTok{"}\SpecialCharTok{\textbackslash{}n}\StringTok{      Mg C/ha/yr"}\NormalTok{, }\AttributeTok{size=}\FunctionTok{c}\NormalTok{(}\FloatTok{0.7}\NormalTok{,}\DecValTok{1}\NormalTok{) ), }
+     \AttributeTok{colNA =} \StringTok{"black"}\NormalTok{, }
+     \AttributeTok{mar=}\NormalTok{mar.val,}
+     \AttributeTok{box =} \ConstantTok{FALSE}\NormalTok{)}
+\FunctionTok{plot}\NormalTok{(transStates}\SpecialCharTok{$}\NormalTok{geometry, }
+     \AttributeTok{border =} \StringTok{"white"}\NormalTok{, }
+     \AttributeTok{add =} \ConstantTok{TRUE}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{edwebinar_mar19_ornldaac_tutorial_files/figure-latex/crop_plot-2.pdf}
+
+If you look closely at the cells ``outside'' the boundary of the
+\emph{transStates} polygons, you can still see cell values. That's
+because \texttt{crop()} changed the extent of the two raster objects to
+match that of the simple feature object, but \texttt{crop()} did not
+change cells outside of the polygon boundaries.
+
+To remove those extraneous cell values, use the \texttt{mask()} function
+to create two new rasters, one for fire damage and one for insect
+damage. The \emph{terra} function \texttt{mask()} will convert raster
+cells outside of the state polygons to NA. \textbf{Note:} You can use
+\texttt{mask()} or \texttt{crop()} in either order.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# this will take a couple of minutes to run}
+\NormalTok{maskFire }\OtherTok{\textless{}{-}} \FunctionTok{mask}\NormalTok{(cropFire, transStates)  }\CommentTok{\# mask(raster object, mask object)}
+\NormalTok{maskInsect }\OtherTok{\textless{}{-}} \FunctionTok{mask}\NormalTok{(cropInsect, transStates)}
+\end{Highlighting}
+\end{Shaded}
+
+Plot \emph{maskFire} and \emph{maskInsect}.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{plot}\NormalTok{(maskFire, }
+     \AttributeTok{main =} \StringTok{"Gross Carbon Emissions from Fire Damage}\SpecialCharTok{\textbackslash{}n}\StringTok{ across ID, MT, WY Forests (2006{-}2010)"}\NormalTok{, }
+     \AttributeTok{xlab =} \StringTok{"horizontal extent (m)"}\NormalTok{, }
+     \AttributeTok{ylab =} \StringTok{"vertical extent (m)"}\NormalTok{, }
+     \AttributeTok{plg=}\FunctionTok{list}\NormalTok{( }\AttributeTok{title=}\StringTok{"}\SpecialCharTok{\textbackslash{}n}\StringTok{      Mg C/ha/yr"}\NormalTok{, }\AttributeTok{size=}\FunctionTok{c}\NormalTok{(}\FloatTok{0.7}\NormalTok{,}\DecValTok{1}\NormalTok{) ), }
+     \AttributeTok{colNA =} \StringTok{"black"}\NormalTok{, }
+     \AttributeTok{mar=}\NormalTok{mar.val,}
+     \AttributeTok{box =} \ConstantTok{FALSE}\NormalTok{) }
+\FunctionTok{plot}\NormalTok{(transStates}\SpecialCharTok{$}\NormalTok{geometry, }
+     \AttributeTok{border =} \StringTok{"white"}\NormalTok{, }
+     \AttributeTok{add =} \ConstantTok{TRUE}\NormalTok{) }
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{edwebinar_mar19_ornldaac_tutorial_files/figure-latex/mask_plot-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{plot}\NormalTok{(maskInsect, }
+     \AttributeTok{main =} \StringTok{"Gross Carbon Emissions from Insect Damage}\SpecialCharTok{\textbackslash{}n}\StringTok{ across ID, MT, WY Forests (2005{-}2010)"}\NormalTok{, }
+     \AttributeTok{xlab =} \StringTok{"horizontal extent (m)"}\NormalTok{, }
+     \AttributeTok{ylab =} \StringTok{"vertical extent (m)"}\NormalTok{, }
+     \AttributeTok{plg=}\FunctionTok{list}\NormalTok{( }\AttributeTok{title=}\StringTok{"}\SpecialCharTok{\textbackslash{}\textbackslash{}}\StringTok{n      Mg C/ha/yr"}\NormalTok{, }\AttributeTok{size=}\FunctionTok{c}\NormalTok{(}\FloatTok{0.7}\NormalTok{,}\DecValTok{1}\NormalTok{) ), }
+     \AttributeTok{colNA =} \StringTok{"black"}\NormalTok{, }
+     \AttributeTok{mar=}\NormalTok{mar.val,}
+     \AttributeTok{box =} \ConstantTok{FALSE}\NormalTok{) }
+\FunctionTok{plot}\NormalTok{(transStates}\SpecialCharTok{$}\NormalTok{geometry, }
+     \AttributeTok{border =} \StringTok{"white"}\NormalTok{, }
+     \AttributeTok{add =} \ConstantTok{TRUE}\NormalTok{) }
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{edwebinar_mar19_ornldaac_tutorial_files/figure-latex/mask_plot-2.pdf}
+
+These plots demonstrate that all cell values outside of the
+\emph{transStates} polygons are now NA.
+
+\hypertarget{examine-summaries-of-raster-values}{%
+\section{Examine Summaries of Raster
+Values}\label{examine-summaries-of-raster-values}}
+
+\begin{quote}
+\emph{Functions featured in this section:}\\
+\textbf{terra::extract()}\\
+extracts values from a raster object at the locations of other spatial
+data
+\end{quote}
+
+In this section, we will compare the three states by their carbon
+emissions from fire damage.
+
+We will use \emph{terra}'s \texttt{extract()} function to collect the
+cell values of \emph{maskFire} where the \emph{transStates} simple
+feature object overlaps the raster object. We will use
+\texttt{summary()} to examine the distribution of cell values that we
+collect.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# this can take up to an hour to run, so load a saved copy for the demonstration}
+\ControlFlowTok{if}\NormalTok{(}\FunctionTok{file.exists}\NormalTok{(}\StringTok{"./data/val\_fireStates.Rds"}\NormalTok{)) \{ }
+\NormalTok{  val\_fireStates }\OtherTok{\textless{}{-}} \FunctionTok{readRDS}\NormalTok{(}\StringTok{"./data/val\_fireStates.rds"}\NormalTok{) }
+  \FunctionTok{summary}\NormalTok{(val\_fireStates) }
+\NormalTok{  \}}\ControlFlowTok{else}\NormalTok{\{ }
+\NormalTok{    val\_fireStates }\OtherTok{\textless{}{-}} \FunctionTok{extract}\NormalTok{(maskFire, transStates, }\AttributeTok{df =} \ConstantTok{TRUE}\NormalTok{)  }\CommentTok{\# extract(raster object, extent object) }
+    \FunctionTok{summary}\NormalTok{(val\_fireStates) }
+    \CommentTok{\# saveRDS(val\_fireStates, "./data/val\_fireStates.Rds") \# uncomment this line to save to file}
+\NormalTok{  \}}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##        ID        GrossEmissions_v101_USA_Fire
+##  Min.   :1.000   Min.   :  2                 
+##  1st Qu.:1.000   1st Qu.: 27                 
+##  Median :2.000   Median : 47                 
+##  Mean   :1.807   Mean   : 56                 
+##  3rd Qu.:3.000   3rd Qu.: 76                 
+##  Max.   :3.000   Max.   :333                 
+##                  NA's   :84454561
+\end{verbatim}
+
+There are two columns in this summary of \emph{val\_fireStates}. One is
+ID, which corresponds with the three states; 1 = Idaho, 2 = Montana, and
+3 = Wyoming. The ID value corresponds to the row order of the polygons.
+That is why it was important to sort \emph{threeStates} object by `NAME'
+in the code above. Still, it is a good idea to verify this order.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{cbind}\NormalTok{(}\StringTok{"ID"}\OtherTok{=}\DecValTok{1}\SpecialCharTok{:}\DecValTok{3}\NormalTok{, }\StringTok{"state"}\OtherTok{=}\NormalTok{transStates}\SpecialCharTok{$}\NormalTok{NAME)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##      ID  state    
+## [1,] "1" "Idaho"  
+## [2,] "2" "Montana"
+## [3,] "3" "Wyoming"
+\end{verbatim}
+
+The second column is a summary of all cell values across those three
+states. On average (mean), 56 megagrams of carbon per ha per year are a
+result of forest destruction by fire damage for all states combined.
+
+To look at the summary for cell values by state, we will use
+\texttt{subset()} to split \emph{val\_fireStates} into three data
+frames, one for each state. In the code below, we subset
+\emph{val\_fireStates} so that only the rows with ID == ``1''
+(representing Idaho) will be returned. We name the new object with the
+prefix ``temp'' and suffix ``id'' (Idaho).
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{temp\_val\_id }\OtherTok{\textless{}{-}} \FunctionTok{subset}\NormalTok{(val\_fireStates, }\AttributeTok{subset =}\NormalTok{ ID }\SpecialCharTok{\%in\%} \DecValTok{1}\NormalTok{)  }\CommentTok{\# Idaho values}
+\FunctionTok{summary}\NormalTok{(temp\_val\_id) }
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##        ID    GrossEmissions_v101_USA_Fire
+##  Min.   :1   Min.   :  3                 
+##  1st Qu.:1   1st Qu.: 27                 
+##  Median :1   Median : 49                 
+##  Mean   :1   Mean   : 58                 
+##  3rd Qu.:1   3rd Qu.: 79                 
+##  Max.   :1   Max.   :254                 
+##              NA's   :37907760
+\end{verbatim}
+
+The summary demonstrates that there is now only a single value in the ID
+column, and that the distribution of cell values has changed. This
+resultant data frame object is quite large and has more information than
+we need. We need only the second column and don't care for the large
+number of NA's.
+
+To create a new vector of cells values from \emph{temp\_val\_id}, use
+the \texttt{is.na()} function to eliminate the rows with NA cells and
+select the second column holding emissions values.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{val\_id }\OtherTok{\textless{}{-}}\NormalTok{ temp\_val\_id[}\SpecialCharTok{!}\FunctionTok{is.na}\NormalTok{(temp\_val\_id}\SpecialCharTok{$}\NormalTok{GrossEmissions\_v101\_USA\_Fire),}\DecValTok{2}\NormalTok{] }
+\FunctionTok{summary}\NormalTok{(val\_id) }
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+##    3.00   27.00   49.00   58.06   79.00  254.00
+\end{verbatim}
+
+The resultant object, \emph{val\_id}, is a vector object (a single
+column of numbers) with no NA's.
+
+We will do the same with \emph{val\_fire} for the states Montana and
+Wyoming.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{temp\_val\_mt }\OtherTok{\textless{}{-}} \FunctionTok{subset}\NormalTok{(val\_fireStates, }\AttributeTok{subset =}\NormalTok{ ID }\SpecialCharTok{\%in\%} \DecValTok{2}\NormalTok{)  }\CommentTok{\# Montana}
+\NormalTok{val\_mt }\OtherTok{\textless{}{-}}\NormalTok{ temp\_val\_mt[}\SpecialCharTok{!}\FunctionTok{is.na}\NormalTok{(temp\_val\_mt}\SpecialCharTok{$}\NormalTok{GrossEmissions\_v101\_USA\_Fire), }\DecValTok{2}\NormalTok{] }
+\NormalTok{temp\_val\_wy }\OtherTok{\textless{}{-}} \FunctionTok{subset}\NormalTok{(val\_fireStates, }\AttributeTok{subset =}\NormalTok{ ID }\SpecialCharTok{\%in\%} \DecValTok{3}\NormalTok{)  }\CommentTok{\# Wyoming}
+\NormalTok{val\_wy }\OtherTok{\textless{}{-}}\NormalTok{ temp\_val\_wy[}\SpecialCharTok{!}\FunctionTok{is.na}\NormalTok{(temp\_val\_wy}\SpecialCharTok{$}\NormalTok{GrossEmissions\_v101\_USA\_Fire), }\DecValTok{2}\NormalTok{] }
+\FunctionTok{rm}\NormalTok{(temp\_val\_id, temp\_val\_mt, temp\_val\_wy)  }\CommentTok{\# clean up}
+\end{Highlighting}
+\end{Shaded}
+
+What's the total carbon emissions from fire for each state and the range
+of values within each state for the period 2006 to 2010?
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{cat}\NormalTok{(}\StringTok{"Number of cells burned (ha)}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{)  }\CommentTok{\# divide totals by 1000 to improve ability to compare}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Number of cells burned (ha)
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{cat}\NormalTok{(}\StringTok{"Idaho: "}\NormalTok{, }\FunctionTok{length}\NormalTok{(val\_id), }\StringTok{"  Montana: "}\NormalTok{, }\FunctionTok{length}\NormalTok{(val\_mt), }
+        \StringTok{" Wyoming: "}\NormalTok{, }\FunctionTok{length}\NormalTok{(val\_wy),}\StringTok{"}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Idaho:  176544   Montana:  49758  Wyoming:  379739
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{cat}\NormalTok{(}\StringTok{"}\SpecialCharTok{\textbackslash{}n}\StringTok{Total emissions (/1000)}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{)  }\CommentTok{\# divide totals by 1000 to improve ability to compare}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## Total emissions (/1000)
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{cat}\NormalTok{(}\StringTok{"Idaho: "}\NormalTok{, }\FunctionTok{sum}\NormalTok{(val\_id)}\SpecialCharTok{/}\DecValTok{1000}\NormalTok{, }\StringTok{"  Montana: "}\NormalTok{, }\FunctionTok{sum}\NormalTok{(val\_mt)}\SpecialCharTok{/}\DecValTok{1000}\NormalTok{, }
+        \StringTok{" Wyoming: "}\NormalTok{, }\FunctionTok{sum}\NormalTok{(val\_wy)}\SpecialCharTok{/}\DecValTok{1000}\NormalTok{,}\StringTok{"}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{)   }
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Idaho:  10250.22   Montana:  2660.297  Wyoming:  20961.93
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{cat}\NormalTok{(}\StringTok{"}\SpecialCharTok{\textbackslash{}n}\StringTok{Distribution of cell values}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## Distribution of cell values
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{cat}\NormalTok{(}\StringTok{"Idaho}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{); }\FunctionTok{summary}\NormalTok{(val\_id); }\FunctionTok{cat}\NormalTok{(}\StringTok{"Montana}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{); }\FunctionTok{summary}\NormalTok{(val\_mt); }\FunctionTok{cat}\NormalTok{(}\StringTok{"Wyoming}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{); }\FunctionTok{summary}\NormalTok{(val\_wy) }
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Idaho
+\end{verbatim}
+
+\begin{verbatim}
+##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+##    3.00   27.00   49.00   58.06   79.00  254.00
+\end{verbatim}
+
+\begin{verbatim}
+## Montana
+\end{verbatim}
+
+\begin{verbatim}
+##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+##    4.00   24.00   43.00   53.46   70.00  230.00
+\end{verbatim}
+
+\begin{verbatim}
+## Wyoming
+\end{verbatim}
+
+\begin{verbatim}
+##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+##     2.0    27.0    47.0    55.2    75.0   333.0
+\end{verbatim}
+
+Idaho has the greatest number of cells burned, the highest total carbon
+emissions, and the maximum gross carbon emissions from a single cell. In
+contrast, the largest mean emissions from cells occurred in Montana.
+Wyoming had the least amount of carbon emissions due to fire.
+
+In addition to using \texttt{summary()}, we can create graphs to
+visualize carbon emissions from fire damage within each of the three
+states. The function \texttt{hist()} plots the frequency of cell values.
+We will set some arguments of the plot so that we can compare carbon
+emissions across all three states.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{par}\NormalTok{(}\AttributeTok{mfrow=}\FunctionTok{c}\NormalTok{(}\DecValTok{2}\NormalTok{,}\DecValTok{2}\NormalTok{), }\AttributeTok{mar=}\FunctionTok{c}\NormalTok{(}\DecValTok{3}\NormalTok{,}\DecValTok{3}\NormalTok{,}\DecValTok{3}\NormalTok{,}\DecValTok{3}\NormalTok{)) }
+\FunctionTok{hist}\NormalTok{(val\_id, }
+     \AttributeTok{main =} \StringTok{"Idaho"}\NormalTok{, }
+     \AttributeTok{ylab =} \StringTok{"number of cells"}\NormalTok{, }
+     \AttributeTok{xlab =} \StringTok{"megagrams of carbon per ha per year (Mg C/ha/yr)"}\NormalTok{, }
+     \AttributeTok{ylim =} \FunctionTok{c}\NormalTok{(}\DecValTok{0}\NormalTok{, }\DecValTok{120000}\NormalTok{),  }\CommentTok{\# same y{-}axis limit for all three states}
+     \AttributeTok{xlim =} \FunctionTok{c}\NormalTok{(}\DecValTok{0}\NormalTok{, }\DecValTok{350}\NormalTok{))  }\CommentTok{\# same x{-}axis limit for all three states}
+\FunctionTok{hist}\NormalTok{(val\_mt, }
+     \AttributeTok{main =} \StringTok{"Montana"}\NormalTok{, }
+     \AttributeTok{ylab =} \StringTok{"number of cells"}\NormalTok{, }
+     \AttributeTok{xlab =} \StringTok{"megagrams of carbon per ha per year (Mg C/ha/yr)"}\NormalTok{, }
+     \AttributeTok{ylim =} \FunctionTok{c}\NormalTok{(}\DecValTok{0}\NormalTok{, }\DecValTok{120000}\NormalTok{), }
+     \AttributeTok{xlim =} \FunctionTok{c}\NormalTok{(}\DecValTok{0}\NormalTok{, }\DecValTok{350}\NormalTok{)) }
+\FunctionTok{hist}\NormalTok{(val\_wy, }
+     \AttributeTok{main =} \StringTok{"Wyoming"}\NormalTok{, }
+     \AttributeTok{ylab =} \StringTok{"number of cells"}\NormalTok{, }
+     \AttributeTok{xlab =} \StringTok{"megagrams of carbon per ha per year (Mg C/ha/yr)"}\NormalTok{, }
+     \AttributeTok{ylim =} \FunctionTok{c}\NormalTok{(}\DecValTok{0}\NormalTok{, }\DecValTok{120000}\NormalTok{), }
+     \AttributeTok{xlim =} \FunctionTok{c}\NormalTok{(}\DecValTok{0}\NormalTok{, }\DecValTok{350}\NormalTok{)) }
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{edwebinar_mar19_ornldaac_tutorial_files/figure-latex/fire_summary_7-1.pdf}
+
+The histograms show the number of times (on the y-axis) each unique cell
+value (on the x-axis) occurs in each state. In other words, these plots
+illustrate the variation in carbon emissions from fire damage within the
+three different states and provide a visual display of the numerical
+summaries above.
+
+\hypertarget{reclassify-raster-values}{%
+\section{Reclassify Raster Values}\label{reclassify-raster-values}}
+
+\begin{quote}
+\emph{Functions featured in this section:}\\
+\textbf{reclassify()}\\
+reclassifies groups of values of a raster object to other values\\
+\textbf{calc()}\\
+calculates values for a new raster object from another raster object
+using a formula
+\end{quote}
+
+Now we are going to change the values of our two raster objects using
+different methods. The goal is to generate a single map that shows the
+cells where fire and insect disturbances occurred. Fire and insect maps
+are reclassified individually then combined.
+
+Beginning with \emph{maskFire}, we convert all cells with values
+\textgreater0 to the value 2 and save the new raster object to
+\emph{reclassFire} .
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{reclassFire }\OtherTok{\textless{}{-}}\NormalTok{ maskFire}
+\NormalTok{reclassFire[reclassFire }\SpecialCharTok{\textgreater{}}\DecValTok{0}\NormalTok{] }\OtherTok{\textless{}{-}} \DecValTok{2}
+\end{Highlighting}
+\end{Shaded}
+
+Check that our reclassification of \emph{maskFire} worked as expected
+using \texttt{summary()}. The pair of square brackets (``{[}{]}'') after
+the raster name tells the summary command to read all values of the
+raster.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{summary}\NormalTok{(reclassFire[]) }
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##  GrossEmissions_v101_USA_Fire
+##  Min.   :2                   
+##  1st Qu.:2                   
+##  Median :2                   
+##  Mean   :2                   
+##  3rd Qu.:2                   
+##  Max.   :2                   
+##  NA's   :115010680
+\end{verbatim}
+
+Yes, all values are either 2 or NA.
+
+All cell values of \emph{reclassFire} should be at the same locations as
+\emph{maskFire} but with a single value.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{plot}\NormalTok{(reclassFire, }
+     \AttributeTok{main =} \StringTok{"Locations of Forest Disturbance from Fire Damage}\SpecialCharTok{\textbackslash{}n}\StringTok{ across ID, MT, WY Forests (2006{-}2010)"}\NormalTok{, }
+     \AttributeTok{xlab =} \StringTok{"horizontal extent (m)"}\NormalTok{, }
+     \AttributeTok{ylab =} \StringTok{"vertical extent (m)"}\NormalTok{, }
+     \AttributeTok{legend =} \ConstantTok{FALSE}\NormalTok{, }
+     \AttributeTok{col =} \StringTok{"red"}\NormalTok{, }\AttributeTok{colNA =} \StringTok{"black"}\NormalTok{, }
+     \AttributeTok{mar=}\FunctionTok{c}\NormalTok{(}\FloatTok{3.1}\NormalTok{, }\FloatTok{1.1}\NormalTok{, }\FloatTok{2.8}\NormalTok{, }\FloatTok{1.1}\NormalTok{),  }\CommentTok{\# bot,lft,top,rgt}
+     \AttributeTok{box =} \ConstantTok{FALSE}\NormalTok{)}
+\FunctionTok{plot}\NormalTok{(transStates}\SpecialCharTok{$}\NormalTok{geometry, }
+     \AttributeTok{border =} \StringTok{"white"}\NormalTok{, }
+     \AttributeTok{add =} \ConstantTok{TRUE}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{edwebinar_mar19_ornldaac_tutorial_files/figure-latex/reclass_3-1.pdf}
+
+The plot of \emph{reclassFire} now illustrates locations where there
+were carbon emissions due to forest fire. Notice that we chose a single
+color to represent the presence of values using the argument ``col
+=''red''\,``.
+
+Now we will reclassify all values of \emph{maskInsect} that are greater
+than zero to be 1. Let's check the range of values for this raster.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{range}\NormalTok{(maskInsect[], }\AttributeTok{na.rm=}\ConstantTok{TRUE}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+This time, we will use the \texttt{classify()} function in the
+\emph{terra} package. This function uses a matrix to identify the target
+cell values and to what value those cells will change.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{reclassInsect }\OtherTok{\textless{}{-}} \FunctionTok{classify}\NormalTok{(maskInsect, }
+                            \AttributeTok{rcl =} \FunctionTok{matrix}\NormalTok{(}\AttributeTok{data =} \FunctionTok{c}\NormalTok{(}\DecValTok{0}\NormalTok{, }\DecValTok{285}\NormalTok{, }\DecValTok{1}\NormalTok{),  }\CommentTok{\# c(from value, to value, becomes)}
+                                         \AttributeTok{nrow =} \DecValTok{1}\NormalTok{, }\AttributeTok{ncol =} \DecValTok{3}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+The argument following ``rcl ='' tells R that values from 1 to 285
+should be reclassified as one. Essentially, we are making the presence
+of insect damage equal one.
+
+Check the reclassification of \emph{maskInsect} using
+\texttt{summary()}.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{summary}\NormalTok{(reclassInsect[]) }
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##  GrossEmissions_v101_USA_Insect
+##  Min.   :1                     
+##  1st Qu.:1                     
+##  Median :1                     
+##  Mean   :1                     
+##  3rd Qu.:1                     
+##  Max.   :1                     
+##  NA's   :113254371
+\end{verbatim}
+
+All values are 1 or NA.
+
+Plot \emph{reclassInsect}. All the cell values should be at the same
+locations as \emph{maskInsect} but will all be the value one.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{plot}\NormalTok{(reclassInsect, }
+     \AttributeTok{main =} \StringTok{"Locations of Forest Disturbance from Insect Damage}\SpecialCharTok{\textbackslash{}n}\StringTok{ across ID, MT, WY Forests (2006{-}2010)"}\NormalTok{, }
+     \AttributeTok{xlab =} \StringTok{"horizontal extent (m)"}\NormalTok{, }
+     \AttributeTok{ylab =} \StringTok{"vertical extent (m)"}\NormalTok{, }
+     \AttributeTok{legend =} \ConstantTok{FALSE}\NormalTok{, }
+     \AttributeTok{col =} \StringTok{"dark green"}\NormalTok{, }
+     \AttributeTok{colNA =} \StringTok{"black"}\NormalTok{, }
+     \AttributeTok{mar=}\FunctionTok{c}\NormalTok{(}\FloatTok{3.1}\NormalTok{, }\FloatTok{1.1}\NormalTok{, }\FloatTok{3.1}\NormalTok{, }\FloatTok{1.1}\NormalTok{),}
+     \AttributeTok{box =} \ConstantTok{FALSE}\NormalTok{)}
+\FunctionTok{plot}\NormalTok{(transStates}\SpecialCharTok{$}\NormalTok{geometry, }
+     \AttributeTok{border =} \StringTok{"white"}\NormalTok{, }
+     \AttributeTok{add =} \ConstantTok{TRUE}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{edwebinar_mar19_ornldaac_tutorial_files/figure-latex/reclass_plot-1.pdf}
+
+The plot illustrates locations where there were carbon emissions due to
+insect damage in forests, so now the information conveyed by the
+\emph{maskInsect} raster object is presence or absence of insect damage.
+
+\hypertarget{combine-two-rasters}{%
+\section{Combine Two Rasters}\label{combine-two-rasters}}
+
+\begin{quote}
+\emph{Functions featured in this section:}\\
+\textbf{cover()}\\
+replaces NA values in the first raster object with the values of the
+second
+\end{quote}
+
+Next, we will join \emph{reclassFire} and \emph{reclassInsect} to form a
+single raster object. According to the documentation for this dataset,
+there are no overlapping, non-NA cells between the two raster objects.
+That is, if you were to combine the two rasters object, a cell could
+take only the value provided by \emph{reclassFire} (i.e., 2) or
+\emph{reclassInsect} (i.e., 1), or be NA. This allows us to use the
+\texttt{cover()} function to combine objects. \texttt{cover()} will
+replace NA values of \emph{reclassFire} with non-NA values of
+\emph{reclassInsect}.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# this could take a couple of minutes to run }
+\NormalTok{fireInsect }\OtherTok{\textless{}{-}} \FunctionTok{cover}\NormalTok{(reclassFire, reclassInsect) }
+\end{Highlighting}
+\end{Shaded}
+
+Check the combination of \emph{reclassFire} and \emph{reclassInsect}
+using \texttt{summary()}.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{summary}\NormalTok{(fireInsect[]) }
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##  GrossEmissions_v101_USA_Fire
+##  Min.   :1                   
+##  1st Qu.:1                   
+##  Median :1                   
+##  Mean   :1                   
+##  3rd Qu.:1                   
+##  Max.   :2                   
+##  NA's   :112648329
+\end{verbatim}
+
+The data distribution of the new raster object shows that the minimum
+value is now 1 (i.e., the insect damage value we specified during
+reclassification) and the maximum value is 2 (i.e., the fire damage
+value).
+
+The plotting arguments below now reflect the ``breaks'' in the values we
+would like to see illustrated on the plot. Insect damage is displayed as
+green cells and fire damage as red.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{plot}\NormalTok{(fireInsect, }
+     \AttributeTok{main =} \StringTok{"Locations of Forest Disturbance}\SpecialCharTok{\textbackslash{}n}\StringTok{ across ID, MT, WY Forests (2006{-}2010)"}\NormalTok{, }
+     \AttributeTok{xlab =} \StringTok{"horizontal extent (m)"}\NormalTok{, }
+     \AttributeTok{ylab =} \StringTok{"vertical extent (m)"}\NormalTok{, }
+     \AttributeTok{plg =} \FunctionTok{list}\NormalTok{(}\AttributeTok{legend=}\FunctionTok{c}\NormalTok{(}\StringTok{"insect"}\NormalTok{,}\StringTok{"fire"}\NormalTok{), }\AttributeTok{title=}\StringTok{"  Disturbance"}\NormalTok{), }
+     \AttributeTok{col =} \FunctionTok{c}\NormalTok{(}\StringTok{"dark green"}\NormalTok{, }\StringTok{"red"}\NormalTok{),}
+     \AttributeTok{colNA =} \StringTok{"black"}\NormalTok{, }
+     \AttributeTok{mar=}\FunctionTok{c}\NormalTok{(}\FloatTok{3.1}\NormalTok{, }\FloatTok{1.1}\NormalTok{, }\FloatTok{3.1}\NormalTok{, }\FloatTok{1.1}\NormalTok{),}
+     \AttributeTok{box =} \ConstantTok{FALSE}\NormalTok{)}
+\FunctionTok{plot}\NormalTok{(transStates}\SpecialCharTok{$}\NormalTok{geometry, }
+     \AttributeTok{border =} \StringTok{"white"}\NormalTok{, }
+     \AttributeTok{add =} \ConstantTok{TRUE}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{edwebinar_mar19_ornldaac_tutorial_files/figure-latex/combine_3-1.pdf}
+
+\hypertarget{reproject-and-write-a-raster}{%
+\section{Reproject and Write a
+Raster}\label{reproject-and-write-a-raster}}
+
+\begin{quote}
+\emph{Functions featured in this section:}\\
+\textbf{projectRaster \{raster\}}\\
+projects the values of a raster object to a new one with a different
+projection\\
+\textbf{writeRaster \{raster\}}\\
+writes an entire raster object to a file
+\end{quote}
+
+Reprojecting a raster in R is different than transforming the CRS as we
+did with the simple feature earlier in the exercise. To reproject a
+raster, we use the \texttt{project()} function and the \texttt{crs()}
+function to provide the CRS information. The nearest neighbor
+\texttt{method} (`near') is used to maintain cell values of 1 and 2.
+Other reprojection methods can produce cell values that are the average
+of nearby cells, a situation we want to avoid here.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# this may take several minutes to run }
+\NormalTok{prjFireInsect }\OtherTok{\textless{}{-}} \FunctionTok{project}\NormalTok{(fireInsect, }
+                         \FunctionTok{crs}\NormalTok{(}\StringTok{"+proj=longlat +ellps=WGS84 +datum=WGS84 +no\_defs"}\NormalTok{),}
+                         \AttributeTok{method=}\StringTok{"near"}\NormalTok{) }
+\end{Highlighting}
+\end{Shaded}
+
+Now, check the properties of this new raster object using
+\texttt{print()}.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{print}\NormalTok{(prjFireInsect) }
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## class       : SpatRaster 
+## dimensions  : 9169, 13781, 1  (nrow, ncol, nlyr)
+## resolution  : 0.001169079, 0.001169079  (x, y)
+## extent      : -119.2604, -103.1493, 39.61248, 50.33177  (xmin, xmax, ymin, ymax)
+## coord. ref. : +proj=longlat +datum=WGS84 +no_defs 
+## source      : spat_QzEWRdTm2ngwOR5_26608.tif 
+## name        : GrossEmissions_v101_USA_Fire 
+## min value   :                            1 
+## max value   :                            2
+\end{verbatim}
+
+It's a new raster object named \emph{prjFireInsect} that has the
+standard Geographic projection with latitude and longitude expressed in
+decimal degrees (DD) as its CRS.
+
+We will plot \emph{prjFireInsect} with slightly different arguments than
+\emph{fireInsect} to ``zoom in'' to the center of the plot. Also, we
+will use \emph{threeStates} instead of \emph{transStates} because
+\emph{threeStates} also uses the Geographic projection.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{plot}\NormalTok{(prjFireInsect, }
+     \AttributeTok{main =} \StringTok{"Locations of Forest Disturbance}\SpecialCharTok{\textbackslash{}n}\StringTok{ across ID, MT, WY Forests (2006{-}2010)"}\NormalTok{, }
+     \AttributeTok{xlab =} \StringTok{"longitude (DD)"}\NormalTok{, }
+     \AttributeTok{ylab =} \StringTok{"latitude (DD)"}\NormalTok{, }
+     \AttributeTok{plg =} \FunctionTok{list}\NormalTok{(}\AttributeTok{legend=}\FunctionTok{c}\NormalTok{(}\StringTok{"insect"}\NormalTok{,}\StringTok{"fire"}\NormalTok{), }\AttributeTok{title=}\StringTok{"}\SpecialCharTok{\textbackslash{}n}\StringTok{  Disturbance"}\NormalTok{), }
+     \AttributeTok{col =} \FunctionTok{c}\NormalTok{(}\StringTok{"dark green"}\NormalTok{, }\StringTok{"red"}\NormalTok{),}
+     \AttributeTok{mar=}\FunctionTok{c}\NormalTok{(}\FloatTok{3.1}\NormalTok{, }\FloatTok{1.1}\NormalTok{, }\FloatTok{2.8}\NormalTok{, }\FloatTok{1.1}\NormalTok{),}
+     \AttributeTok{ext =} \FunctionTok{st\_bbox}\NormalTok{(prjFireInsect)}\SpecialCharTok{/}\FloatTok{1.25}\NormalTok{,}
+     \AttributeTok{box =} \ConstantTok{FALSE}\NormalTok{)}
+
+\FunctionTok{plot}\NormalTok{(threeStates}\SpecialCharTok{$}\NormalTok{geometry,}
+     \AttributeTok{border =} \StringTok{"black"}\NormalTok{,}
+     \AttributeTok{add =} \ConstantTok{TRUE}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{edwebinar_mar19_ornldaac_tutorial_files/figure-latex/reproject_3-1.pdf}
+
+Let's use the \texttt{writeRaster()} function to save
+\emph{prjFireInsect} to the data directory. We will save the file in
+GeoTIFF (*.tif) format so that the geographic information of the raster
+object is retrievable outside of R.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{writeRaster}\NormalTok{(prjFireInsect, }\AttributeTok{filename =} \StringTok{"./data/prjFireInsect.tif"}\NormalTok{, }\AttributeTok{overwrite=}\ConstantTok{TRUE}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+Use the function \texttt{file.exists()}, which tests for the existence
+of a given file, to ensure that \emph{prjFireInsect} was successfully
+saved to our working directory.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{file.exists}\NormalTok{(}\StringTok{"./data/prjFireInsect.tif"}\NormalTok{) }
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] TRUE
+\end{verbatim}
+
+Now we are able to share the raster with others or open it in another
+program.
+
+\hypertarget{export-a-plot-as-png-and-raster-as-kml}{%
+\section{Export a Plot as PNG and Raster as
+KML}\label{export-a-plot-as-png-and-raster-as-kml}}
+
+\begin{quote}
+\emph{Functions featured in this section:}\\
+\textbf{KML()}\\
+exports raster object data to a KML file
+\end{quote}
+
+To save an imaage of the final plot, we use \texttt{png()} and repeat
+the plot() command. The png() function will open a graphics device that
+will save the plot we run in *.png format. We will use the function
+\texttt{dev.off()} to tell R when we are finished plotting and want to
+close the graphics device.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{png}\NormalTok{(}\StringTok{"prjFireInsect.png"}\NormalTok{, }\AttributeTok{width=}\DecValTok{650}\NormalTok{, }\AttributeTok{res=}\DecValTok{80}\NormalTok{) }
+\FunctionTok{plot}\NormalTok{(prjFireInsect, }
+     \AttributeTok{main =} \StringTok{"Locations of Forest Disturbance}\SpecialCharTok{\textbackslash{}n}\StringTok{ across ID, MT, WY Forests (2006{-}2010)"}\NormalTok{, }
+     \AttributeTok{xlab =} \StringTok{"longitude (DD)"}\NormalTok{, }
+     \AttributeTok{ylab =} \StringTok{"latitude (DD)"}\NormalTok{, }
+     \AttributeTok{plg =} \FunctionTok{list}\NormalTok{(}\AttributeTok{legend=}\FunctionTok{c}\NormalTok{(}\StringTok{"insect"}\NormalTok{,}\StringTok{"fire"}\NormalTok{), }\AttributeTok{title=}\StringTok{"}\SpecialCharTok{\textbackslash{}n}\StringTok{  Disturbance"}\NormalTok{), }
+     \AttributeTok{col =} \FunctionTok{c}\NormalTok{(}\StringTok{"dark green"}\NormalTok{, }\StringTok{"red"}\NormalTok{),}
+     \AttributeTok{mar=}\FunctionTok{c}\NormalTok{(}\FloatTok{3.1}\NormalTok{, }\FloatTok{1.1}\NormalTok{, }\FloatTok{2.8}\NormalTok{, }\FloatTok{1.1}\NormalTok{),}
+     \AttributeTok{ext =} \FunctionTok{st\_bbox}\NormalTok{(prjFireInsect)}\SpecialCharTok{/}\FloatTok{1.25}\NormalTok{,}
+     \AttributeTok{box =} \ConstantTok{FALSE}\NormalTok{)}
+\FunctionTok{plot}\NormalTok{(threeStates}\SpecialCharTok{$}\NormalTok{geometry,}
+     \AttributeTok{border =} \StringTok{"black"}\NormalTok{,}
+     \AttributeTok{add =} \ConstantTok{TRUE}\NormalTok{)}
+\FunctionTok{dev.off}\NormalTok{() }
+\end{Highlighting}
+\end{Shaded}
+
+It might be useful to save \emph{prjFireInsect} in *.kmz format. KML
+stands for Keyhole Markup Language, and KMZ is the compressed version of
+KML format. These formats were developed for geographic visualization in
+Google Earth.
+
+At present, the \emph{terra} package does not include an option to
+export a SpatRaster object as a KML/KMZ; it is necessary to use the
+\emph{raster} package. First, \emph{prjFireInsect} must be converted to
+a Raster object then saved using the raster package's KML() function.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{prjFireInsect.r }\OtherTok{\textless{}{-}} \FunctionTok{as}\NormalTok{(prjFireInsect, }\StringTok{"Raster"}\NormalTok{)  }\CommentTok{\# convert to a \textquotesingle{}Raster\textquotesingle{} object}
+\FunctionTok{KML}\NormalTok{(prjFireInsect.r, }\StringTok{"./data/prjFireInsect.kmz"}\NormalTok{, }\AttributeTok{col =} \FunctionTok{c}\NormalTok{(}\StringTok{"dark green"}\NormalTok{, }\StringTok{"red"}\NormalTok{), }\AttributeTok{overwrite=}\ConstantTok{TRUE}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+We successfully saved the raster object as a KMZ file.
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+This is the end to the tutorial. If you liked this tutorial, please tell
+us on \href{https://forum.earthdata.nasa.gov/}{EarthData Forum}. If you
+would like to make a suggestion for a new tutorial, please email
+\href{mailto:uso@ornl.gov}{\nolinkurl{uso@ornl.gov}}.
+
+There is a supplemental document included on GitHub that offers two
+additional sections, \emph{Perform a Focal Analysis} and \emph{Get Cell
+Coordinates}.
+
+\end{document}
