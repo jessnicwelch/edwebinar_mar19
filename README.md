@@ -9,7 +9,7 @@
 ### **Keywords: R, Carbon Monitoring System, GIS**
 
 ***
-**UPDATE:** The entire repo was updated 2021-12-03. This will likely be the last update to the tutorial, as the rgdal package will retire in 2023, and the code would require an extensive rewrite.
+**UPDATE:** The entire repo was updated 2021-12-03 and again on 2024-01-25. The recent update includes a revision of the primary tutorial to replace deprecated packages (e.g., rgdal).
 
 # 1. Overview
 
@@ -62,9 +62,9 @@ Participants should have a basic understanding of R and some exposure to geospat
 
 # 5. Credits
 
-* [R](https://www.r-project.org/) - 4.1.0 (2021-05-18) -- "Camp Pontanezen"  
+* [R](https://www.r-project.org/) - 4.3.2 (2023-10-31) -- "Eye Holes"  
 * [RStudio](https://www.rstudio.com/products/rstudio/) - IDE and notebook construction  
 * [raster package](https://CRAN.R-project.org/package=raster) - geospatial data manipulations  
-* [rgdal package](https://cran.r-project.org/package=rgdal) - bindings for geospatial data manipulations  
 * [sf package](https://cran.r-project.org/web/packages/sf/index.html) - support for simple features
+* [terra package](https://cran.r-project.org/package=terra) - spatial data analysis with raster (grid) data  
 * [tigris](https://CRAN.R-project.org/package=tigris) - states function  
