@@ -7,6 +7,7 @@
 
 # Data Files
 /data/
+prjFireInsect.png
 
 # Example code in package build process
 *-Ex.R
